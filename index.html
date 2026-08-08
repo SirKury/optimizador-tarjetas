@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Optimizador de Tarjetas de Crédito</title>
+  <meta name="theme-color" content="#1f4f8a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Mis Tarjetas" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <style>
+    :root{
+      --bg:#f6f7f9;
+      --card:#ffffff;
+      --text:#172033;
+      --muted:#667085;
+      --line:#e6e9ef;
+      --accent:#1f4f8a;
+      --accent2:#eef4fb;
+      --good:#177245;
+      --warn:#8a5a00;
+      --danger:#a61b1b;
+      --shadow:0 10px 30px rgba(25,40,65,.07);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg,#f9fafb 0%,var(--bg) 100%);
+    }
+    .wrap{max-width:1180px;margin:0 auto;padding:28px 18px 56px}
+    header{
+      display:flex;justify-content:space-between;gap:18px;align-items:flex-start;
+      margin-bottom:20px
+    }
+    h1{font-size:clamp(26px,4vw,40px);line-height:1.05;margin:0 0 10px}
+    .subtitle{color:var(--muted);max-width:760px;line-height:1.55;margin:0}
+    .install-btn{display:none;margin-top:10px;width:100%;background:var(--accent);color:#fff;border-radius:12px;padding:10px 12px;font-weight:750}
+    .badge-wrap{display:flex;flex-direction:column;align-items:flex-end}
+    .badge{
+      background:var(--accent2);color:var(--accent);border:1px solid #d7e5f5;
+      padding:8px 11px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap
+    }
+    .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
+    .panel{
+      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:20px
+    }
+    .panel h2{font-size:18px;margin:0 0 14px}
+    .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .field label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin:0 0 6px}
+    input,select,button{
+      font:inherit
+    }
+    input,select{
+      width:100%;border:1px solid #d9dee7;border-radius:12px;padding:11px 12px;background:#fff;color:var(--text);
+      outline:none
+    }
+    input:focus,select:focus{border-color:#8eb1d9;box-shadow:0 0 0 3px rgba(31,79,138,.09)}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    button{
+      border:0;border-radius:12px;padding:10px 14px;font-weight:750;cursor:pointer
+    }
+    .primary{background:var(--accent);color:#fff}
+    .secondary{background:#eef1f5;color:#28364a}
+    .ghost{background:#fff;border:1px solid var(--line);color:#344054}
+    .danger{background:#fff1f1;color:var(--danger);border:1px solid #f1caca}
+    .note{
+      margin-top:14px;padding:12px 14px;border-radius:12px;background:#fff8e8;color:#6b4a00;
+      border:1px solid #f0dfb4;font-size:13px;line-height:1.45
+    }
+    .cards{display:grid;gap:10px;margin-top:14px}
+    .card-row{
+      display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;
+      border:1px solid var(--line);border-radius:14px;padding:13px
+    }
+    .card-row strong{display:block;margin-bottom:3px}
+    .small{font-size:12px;color:var(--muted);line-height:1.45}
+    .row-actions{display:flex;gap:6px}
+    .row-actions button{padding:7px 9px;font-size:12px}
+    .hero{
+      background:linear-gradient(135deg,#173d6a,#245c9b);
+      color:#fff;border-radius:18px;padding:20px;margin-bottom:14px
+    }
+    .hero .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.75;font-weight:800}
+    .hero h3{font-size:28px;margin:6px 0 8px}
+    .hero .days{font-size:46px;font-weight:850;line-height:1;margin:8px 0}
+    .hero .days span{font-size:18px;font-weight:650;opacity:.85}
+    .hero .meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:15px}
+    .hero .meta div{background:rgba(255,255,255,.10);padding:10px;border-radius:12px}
+    .hero .meta b{display:block;font-size:12px;opacity:.8;margin-bottom:2px}
+    .hero .meta span{font-size:14px}
+    .sim-fields{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin-bottom:14px}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+    table{width:100%;border-collapse:collapse;min-width:760px}
+    th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;vertical-align:top}
+    th{background:#f8fafc;color:#475467;font-size:12px}
+    tr:last-child td{border-bottom:0}
+    tr.best{background:#f1faf5}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:800
+    }
+    .pill.good{background:#eaf8f0;color:var(--good)}
+    .pill.warn{background:#fff5d9;color:var(--warn)}
+    .pill.bad{background:#ffeded;color:var(--danger)}
+    .section-title{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:20px 0 10px}
+    .section-title h2{margin:0;font-size:18px}
+    .empty{
+      text-align:center;padding:28px 16px;color:var(--muted);border:1px dashed #d8dde6;border-radius:14px
+    }
+    .footer-note{
+      margin-top:18px;color:var(--muted);font-size:12px;line-height:1.55
+    }
+
+    .calendar-panel{margin-top:18px}
+    .calendar-head{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:12px}
+    .calendar-head .field{max-width:220px;width:100%}
+    .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+    .calendar-dow{text-align:center;font-size:11px;color:var(--muted);font-weight:800;padding:4px}
+    .calendar-day{min-height:78px;border:1px solid var(--line);border-radius:12px;padding:7px;background:#fff}
+    .calendar-day.empty-day{background:transparent;border-color:transparent}
+    .calendar-num{font-size:12px;font-weight:850}
+    .calendar-card{font-size:10px;font-weight:800;color:var(--accent);margin-top:9px;line-height:1.15;overflow:hidden;text-overflow:ellipsis}
+    .calendar-days{font-size:10px;color:var(--good);margin-top:3px;font-weight:750}
+
+    @media(max-width:900px){
+      .grid{grid-template-columns:1fr}
+    }
+    @media(max-width:640px){
+      header{display:block}.badge{display:inline-block;margin-top:12px}
+      .fields,.sim-fields{grid-template-columns:1fr}
+      .calendar-day{min-height:64px;padding:5px}
+      .calendar-card,.calendar-days{font-size:9px}
+      .badge-wrap{align-items:flex-start}
+      .hero .meta{grid-template-columns:1fr}
+      .row-actions{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Optimizador de Tarjetas</h1>
+        <p class="subtitle">
+          Registra tus tarjetas, simula una compra y compara cuántos días tendrías hasta la fecha límite de pago.
+          La lógica está diseñada para favorecer el uso del período de gracia sin pagar intereses.
+        </p>
+      </div>
+      <div class="badge-wrap">
+        <div class="badge">Datos guardados solo en este navegador</div>
+        <button id="installApp" class="install-btn">Instalar aplicación</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="panel">
+        <h2>Registrar tarjeta</h2>
+        <div class="fields">
+          <div class="field">
+            <label>Nombre de la tarjeta</label>
+            <input id="cardName" placeholder="Ej. BAC Amex Cashback" />
+          </div>
+          <div class="field">
+            <label>Banco (opcional)</label>
+            <input id="bankName" placeholder="Ej. BAC" />
+          </div>
+          <div class="field">
+            <label>Día de corte</label>
+            <input id="cutoffDay" type="number" min="1" max="31" placeholder="Ej. 5" />
+          </div>
+          <div class="field">
+            <label>Día límite de pago</label>
+            <input id="paymentDay" type="number" min="1" max="31" placeholder="Ej. 25" />
+          </div>
+          <div class="field">
+            <label>Límite de crédito (opcional)</label>
+            <input id="creditLimit" type="number" min="0" step="0.01" placeholder="Ej. 3000" />
+          </div>
+          <div class="field">
+            <label>Saldo utilizado actual (opcional)</label>
+            <input id="currentUsed" type="number" min="0" step="0.01" placeholder="Ej. 450" />
+          </div>
+        </div>
+        <div class="actions">
+          <button class="primary" id="saveCard">Guardar tarjeta</button>
+          <button class="secondary" id="cancelEdit" style="display:none">Cancelar edición</button>
+          <button class="ghost" id="exportBtn">Exportar datos</button>
+          <button class="ghost" id="importBtn">Importar datos</button>
+          <input id="importFile" type="file" accept="application/json" style="display:none" />
+        </div>
+
+        <div class="note">
+          <strong>Supuesto conservador:</strong> si compras exactamente el día de corte, la herramienta asume que la compra
+          podría entrar en ese mismo estado de cuenta. Para maximizar el plazo, suele ser más seguro comprar a partir del día siguiente al corte.
+        </div>
+
+        <div class="section-title">
+          <h2>Mis tarjetas</h2>
+          <button class="danger" id="clearAll" style="display:none">Eliminar todas</button>
+        </div>
+        <div id="cardsList" class="cards"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Simular compra</h2>
+        <div class="sim-fields">
+          <div class="field">
+            <label>Fecha de compra</label>
+            <input id="purchaseDate" type="date" />
+          </div>
+          <div class="field">
+            <label>Monto de compra (opcional)</label>
+            <input id="purchaseAmount" type="number" min="0" step="0.01" placeholder="Ej. 250" />
+          </div>
+          <button class="primary" id="calculateBtn">Calcular</button>
+        </div>
+
+        <div id="recommendation"></div>
+
+        <div class="section-title">
+          <h2>Comparación</h2>
+          <span class="small">Ordenada por mayor plazo estimado</span>
+        </div>
+        <div id="results"></div>
+      </section>
+    </div>
+
+    <section class="panel calendar-panel">
+      <div class="calendar-head">
+        <div>
+          <h2 style="margin:0 0 6px">Calendario de mejor tarjeta</h2>
+          <div class="small">Muestra qué tarjeta maximiza el plazo estimado para cada día del mes.</div>
+        </div>
+        <div class="field">
+          <label>Mes</label>
+          <input id="calendarMonth" type="month" />
+        </div>
+      </div>
+      <div id="calendarGrid" class="calendar-grid"></div>
+    </section>
+
+    <p class="footer-note">
+      Esta herramienta no sustituye las condiciones contractuales de cada banco. El cálculo supone que conservas el período de gracia,
+      que pagas íntegramente el monto requerido para no generar intereses antes de la fecha límite y que la compra se contabiliza de forma normal.
+      Adelantos de efectivo, extrafinanciamientos, cuotas, transferencias de saldo y tarjetas con saldo revolvente pueden seguir reglas distintas.
+    </p>
+  </div>
+
+<script>
+(() => {
+  const STORAGE_KEY = "creditCardOptimizer.cards.v1";
+  let cards = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  let editingId = null;
+
+  const $ = id => document.getElementById(id);
+
+  const els = {
+    cardName: $("cardName"),
+    bankName: $("bankName"),
+    cutoffDay: $("cutoffDay"),
+    paymentDay: $("paymentDay"),
+    creditLimit: $("creditLimit"),
+    currentUsed: $("currentUsed"),
+    saveCard: $("saveCard"),
+    cancelEdit: $("cancelEdit"),
+    exportBtn: $("exportBtn"),
+    importBtn: $("importBtn"),
+    importFile: $("importFile"),
+    clearAll: $("clearAll"),
+    cardsList: $("cardsList"),
+    purchaseDate: $("purchaseDate"),
+    purchaseAmount: $("purchaseAmount"),
+    calculateBtn: $("calculateBtn"),
+    recommendation: $("recommendation"),
+    results: $("results"),
+    calendarMonth: $("calendarMonth"),
+    calendarGrid: $("calendarGrid")
+  };
+
+  function toLocalISO(date){
+    const y = date.getFullYear();
+    const m = String(date.getMonth()+1).padStart(2,"0");
+    const d = String(date.getDate()).padStart(2,"0");
+    return `${y}-${m}-${d}`;
+  }
+
+  els.purchaseDate.value = toLocalISO(new Date());
+  els.calendarMonth.value = `${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,"0")}`;
+
+  function save(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+  }
+
+  function money(v){
+    if(v === null || v === undefined || v === "" || Number.isNaN(Number(v))) return "—";
+    return new Intl.NumberFormat("es-SV",{style:"currency",currency:"USD"}).format(Number(v));
+  }
+
+  function formatDate(d){
+    return new Intl.DateTimeFormat("es-SV",{day:"2-digit",month:"short",year:"numeric"}).format(d);
+  }
+
+  function daysInMonth(year, monthIndex){
+    return new Date(year, monthIndex + 1, 0).getDate();
+  }
+
+  function dateWithClampedDay(year, monthIndex, day){
+    const maxDay = daysInMonth(year, monthIndex);
+    return new Date(year, monthIndex, Math.min(day, maxDay));
+  }
+
+  function addMonthsClamped(date, months, day){
+    const y = date.getFullYear();
+    const m = date.getMonth() + months;
+    return dateWithClampedDay(y, m, day);
+  }
+
+  function normalizeDate(d){
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+
+  function diffDays(a,b){
+    const ms = normalizeDate(b) - normalizeDate(a);
+    return Math.round(ms / 86400000);
+  }
+
+  function calculateCard(card, purchaseDate, amount){
+    const purchase = normalizeDate(purchaseDate);
+    const currentCut = dateWithClampedDay(purchase.getFullYear(), purchase.getMonth(), card.cutoffDay);
+
+    let cutoff;
+    let cutoffDayWarning = false;
+
+    if(purchase <= currentCut){
+      cutoff = currentCut;
+      if(purchase.getTime() === currentCut.getTime()) cutoffDayWarning = true;
+    }else{
+      cutoff = addMonthsClamped(currentCut, 1, card.cutoffDay);
+    }
+
+    let due = dateWithClampedDay(cutoff.getFullYear(), cutoff.getMonth(), card.paymentDay);
+    if(due <= cutoff){
+      due = addMonthsClamped(due, 1, card.paymentDay);
+    }
+
+    const available =
+      card.creditLimit != null
+        ? Math.max(0, Number(card.creditLimit) - Number(card.currentUsed || 0))
+        : null;
+
+    const eligible = !amount || available == null || amount <= available;
+
+    return {
+      ...card,
+      cutoff,
+      due,
+      days: diffDays(purchase, due),
+      available,
+      eligible,
+      cutoffDayWarning
+    };
+  }
+
+  function renderCards(){
+    els.cardsList.innerHTML = "";
+    els.clearAll.style.display = cards.length ? "inline-block" : "none";
+
+    if(!cards.length){
+      els.cardsList.innerHTML = `<div class="empty">Aún no has registrado tarjetas.</div>`;
+      renderResults();
+      return;
+    }
+
+    cards.forEach(card => {
+      const row = document.createElement("div");
+      row.className = "card-row";
+      row.innerHTML = `
+        <div>
+          <strong>${escapeHtml(card.name)}</strong>
+          <div class="small">
+            ${card.bank ? escapeHtml(card.bank) + " · " : ""}
+            Corte: día ${card.cutoffDay} · Pago: día ${card.paymentDay}
+            ${card.creditLimit != null ? ` · Límite: ${money(card.creditLimit)}` : ""}
+            ${card.currentUsed != null ? ` · Usado: ${money(card.currentUsed)}` : ""}
+          </div>
+        </div>
+        <div class="row-actions">
+          <button class="secondary" data-edit="${card.id}">Editar</button>
+          <button class="danger" data-delete="${card.id}">Eliminar</button>
+        </div>
+      `;
+      els.cardsList.appendChild(row);
+    });
+
+    document.querySelectorAll("[data-edit]").forEach(btn => {
+      btn.addEventListener("click", () => editCard(btn.dataset.edit));
+    });
+    document.querySelectorAll("[data-delete]").forEach(btn => {
+      btn.addEventListener("click", () => deleteCard(btn.dataset.delete));
+    });
+
+    renderResults();
+    renderCalendar();
+  }
+
+  function escapeHtml(str){
+    return String(str ?? "").replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    })[m]);
+  }
+
+  function resetForm(){
+    editingId = null;
+    ["cardName","bankName","cutoffDay","paymentDay","creditLimit","currentUsed"].forEach(id => els[id].value = "");
+    els.saveCard.textContent = "Guardar tarjeta";
+    els.cancelEdit.style.display = "none";
+  }
+
+  function editCard(id){
+    const card = cards.find(c => c.id === id);
+    if(!card) return;
+    editingId = id;
+    els.cardName.value = card.name || "";
+    els.bankName.value = card.bank || "";
+    els.cutoffDay.value = card.cutoffDay;
+    els.paymentDay.value = card.paymentDay;
+    els.creditLimit.value = card.creditLimit ?? "";
+    els.currentUsed.value = card.currentUsed ?? "";
+    els.saveCard.textContent = "Guardar cambios";
+    els.cancelEdit.style.display = "inline-block";
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  function deleteCard(id){
+    cards = cards.filter(c => c.id !== id);
+    save();
+    if(editingId === id) resetForm();
+    renderCards();
+  }
+
+  els.saveCard.addEventListener("click", () => {
+    const name = els.cardName.value.trim();
+    const bank = els.bankName.value.trim();
+    const cutoffDay = Number(els.cutoffDay.value);
+    const paymentDay = Number(els.paymentDay.value);
+    const creditLimit = els.creditLimit.value === "" ? null : Number(els.creditLimit.value);
+    const currentUsed = els.currentUsed.value === "" ? null : Number(els.currentUsed.value);
+
+    if(!name || !Number.isInteger(cutoffDay) || cutoffDay < 1 || cutoffDay > 31 ||
+       !Number.isInteger(paymentDay) || paymentDay < 1 || paymentDay > 31){
+      alert("Completa el nombre de la tarjeta y usa días válidos entre 1 y 31.");
+      return;
+    }
+
+    if(creditLimit != null && creditLimit < 0){
+      alert("El límite de crédito no puede ser negativo.");
+      return;
+    }
+    if(currentUsed != null && currentUsed < 0){
+      alert("El saldo utilizado no puede ser negativo.");
+      return;
+    }
+
+    const data = {
+      id: editingId || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
+      name, bank, cutoffDay, paymentDay, creditLimit, currentUsed
+    };
+
+    if(editingId){
+      cards = cards.map(c => c.id === editingId ? data : c);
+    }else{
+      cards.push(data);
+    }
+
+    save();
+    resetForm();
+    renderCards();
+  });
+
+  els.cancelEdit.addEventListener("click", resetForm);
+
+  els.clearAll.addEventListener("click", () => {
+    if(confirm("¿Eliminar todas las tarjetas guardadas en este navegador?")){
+      cards = [];
+      save();
+      resetForm();
+      renderCards();
+    }
+  });
+
+  els.calculateBtn.addEventListener("click", renderResults);
+  els.purchaseDate.addEventListener("change", renderResults);
+  els.purchaseAmount.addEventListener("input", renderResults);
+
+  function renderResults(){
+    if(!cards.length){
+      els.recommendation.innerHTML = "";
+      els.results.innerHTML = `<div class="empty">Registra al menos una tarjeta para comparar.</div>`;
+      return;
+    }
+
+    if(!els.purchaseDate.value){
+      els.results.innerHTML = `<div class="empty">Selecciona una fecha de compra.</div>`;
+      return;
+    }
+
+    const purchase = new Date(els.purchaseDate.value + "T00:00:00");
+    const amount = els.purchaseAmount.value === "" ? null : Number(els.purchaseAmount.value);
+
+    const calculated = cards
+      .map(card => calculateCard(card, purchase, amount))
+      .sort((a,b) => {
+        if(a.eligible !== b.eligible) return a.eligible ? -1 : 1;
+        return b.days - a.days;
+      });
+
+    const best = calculated.find(x => x.eligible);
+
+    if(best){
+      let extra = "";
+      if(best.cutoffDayWarning){
+        extra = `<div style="margin-top:10px;font-size:12px;opacity:.9">
+          ⚠️ La compra coincide con la fecha de corte. El cálculo usa un escenario conservador.
+        </div>`;
+      }
+      els.recommendation.innerHTML = `
+        <div class="hero">
+          <div class="eyebrow">Mejor opción estimada</div>
+          <h3>${escapeHtml(best.name)}</h3>
+          <div class="days">${best.days} <span>días aprox. hasta pagar</span></div>
+          <div class="meta">
+            <div><b>Próximo corte aplicable</b><span>${formatDate(best.cutoff)}</span></div>
+            <div><b>Fecha límite estimada</b><span>${formatDate(best.due)}</span></div>
+          </div>
+          ${extra}
+        </div>
+      `;
+    }else{
+      els.recommendation.innerHTML = `
+        <div class="note">
+          Ninguna tarjeta tiene crédito disponible suficiente para el monto simulado, según los límites y saldos registrados.
+        </div>
+      `;
+    }
+
+    const rows = calculated.map((r, i) => {
+      const isBest = best && r.id === best.id;
+      let status = `<span class="pill good">${r.days} días</span>`;
+      if(!r.eligible) status = `<span class="pill bad">Crédito insuficiente</span>`;
+      else if(r.cutoffDayWarning) status = `<span class="pill warn">${r.days} días · día de corte</span>`;
+
+      return `
+        <tr class="${isBest ? "best" : ""}">
+          <td>
+            <strong>${escapeHtml(r.name)}</strong>
+            <div class="small">${r.bank ? escapeHtml(r.bank) : ""}</div>
+          </td>
+          <td>Día ${r.cutoffDay}</td>
+          <td>${formatDate(r.cutoff)}</td>
+          <td>${formatDate(r.due)}</td>
+          <td>${status}</td>
+          <td>${r.available == null ? "—" : money(r.available)}</td>
+        </tr>
+      `;
+    }).join("");
+
+    els.results.innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tarjeta</th>
+              <th>Corte habitual</th>
+              <th>Corte de esta compra</th>
+              <th>Pago estimado</th>
+              <th>Plazo</th>
+              <th>Crédito disponible</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+  }
+
+
+  function renderCalendar(){
+    if(!els.calendarMonth.value) return;
+    const [year, monthOne] = els.calendarMonth.value.split("-").map(Number);
+    const month = monthOne - 1;
+    const first = new Date(year, month, 1);
+    const mondayIndex = (first.getDay() + 6) % 7;
+    const labels = ["L","M","X","J","V","S","D"];
+    let html = labels.map(x => `<div class="calendar-dow">${x}</div>`).join("");
+    for(let i=0;i<mondayIndex;i++) html += `<div class="calendar-day empty-day"></div>`;
+    const totalDays = daysInMonth(year, month);
+    for(let day=1; day<=totalDays; day++){
+      const purchase = new Date(year, month, day);
+      const ranked = cards
+        .map(card => calculateCard(card, purchase, null))
+        .sort((a,b) => b.days - a.days);
+      const best = ranked[0];
+      html += `<div class="calendar-day">
+        <div class="calendar-num">${day}</div>
+        ${best ? `<div class="calendar-card">${escapeHtml(best.name)}</div><div class="calendar-days">${best.days} días</div>` : `<div class="calendar-card">—</div>`}
+      </div>`;
+    }
+    els.calendarGrid.innerHTML = html;
+  }
+
+  els.calendarMonth.addEventListener("change", renderCalendar);
+
+  els.exportBtn.addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(cards, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "mis_tarjetas_credito.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  els.importBtn.addEventListener("click", () => els.importFile.click());
+
+  els.importFile.addEventListener("change", async () => {
+    const file = els.importFile.files[0];
+    if(!file) return;
+    try{
+      const data = JSON.parse(await file.text());
+      if(!Array.isArray(data)) throw new Error("Formato inválido");
+      const valid = data.every(c =>
+        c && c.name && Number.isInteger(Number(c.cutoffDay)) && Number.isInteger(Number(c.paymentDay))
+      );
+      if(!valid) throw new Error("Datos incompletos");
+      cards = data.map(c => ({
+        id: c.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random())),
+        name: String(c.name),
+        bank: String(c.bank || ""),
+        cutoffDay: Number(c.cutoffDay),
+        paymentDay: Number(c.paymentDay),
+        creditLimit: c.creditLimit === null || c.creditLimit === undefined || c.creditLimit === "" ? null : Number(c.creditLimit),
+        currentUsed: c.currentUsed === null || c.currentUsed === undefined || c.currentUsed === "" ? null : Number(c.currentUsed)
+      }));
+      save();
+      renderCards();
+      alert("Datos importados correctamente.");
+    }catch(e){
+      alert("No se pudo importar el archivo. Verifica que sea una exportación válida de esta herramienta.");
+    }finally{
+      els.importFile.value = "";
+    }
+  });
+
+
+  // PWA: instalación y funcionamiento offline
+  let deferredInstallPrompt = null;
+  const installAppBtn = document.getElementById("installApp");
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    installAppBtn.style.display = "block";
+  });
+
+  installAppBtn.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) {
+      alert("Si no aparece el instalador, abre el menú del navegador y elige 'Agregar a pantalla de inicio' o 'Instalar aplicación'.");
+      return;
+    }
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installAppBtn.style.display = "none";
+  });
+
+  window.addEventListener("appinstalled", () => {
+    installAppBtn.style.display = "none";
+  });
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js").catch(console.error);
+    });
+  }
+
+  renderCards();
+  renderCalendar();
+})();
+</script>
+</body>
+</html>
