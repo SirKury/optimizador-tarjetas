@@ -12,271 +12,81 @@
 <title>Optimizador de Tarjetas</title>
 <style>
 :root{
-  --bg:#f4f6f9;
-  --surface:#ffffff;
-  --text:#162033;
-  --muted:#697386;
-  --line:#e3e7ee;
-  --brand:#173f70;
-  --brand2:#2867a6;
-  --brand-soft:#edf4fb;
-  --good:#177245;
-  --good-soft:#eaf8f0;
-  --warn:#8a5a00;
-  --warn-soft:#fff5d9;
-  --danger:#a61b1b;
-  --danger-soft:#ffeded;
-  --shadow:0 10px 28px rgba(25,45,75,.08);
-  --r:20px;
-  --nav-h:78px;
+  --bg:#f4f6f9;--surface:#fff;--text:#162033;--muted:#697386;--line:#e3e7ee;
+  --brand:#173f70;--brand2:#2867a6;--brand-soft:#edf4fb;
+  --good:#177245;--good-soft:#eaf8f0;--warn:#8a5a00;--warn-soft:#fff5d9;
+  --danger:#a61b1b;--danger-soft:#ffeded;--shadow:0 10px 28px rgba(25,45,75,.08);
+  --r:20px;--nav-h:80px
 }
-*{box-sizing:border-box}
-html{background:var(--bg)}
-body{
-  margin:0;
-  min-height:100vh;
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  color:var(--text);
-  background:linear-gradient(180deg,#f8fafc 0%,var(--bg) 46%);
-  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
-}
-button,input{font:inherit}
-button{cursor:pointer}
-button:focus-visible,input:focus-visible{outline:3px solid rgba(40,103,166,.18);outline-offset:2px}
-.app-shell{max-width:1080px;margin:0 auto}
-.appbar{
-  position:sticky;top:0;z-index:20;
-  display:flex;align-items:center;justify-content:space-between;gap:14px;
-  padding:calc(12px + env(safe-area-inset-top)) 16px 12px;
-  background:rgba(248,250,252,.92);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(227,231,238,.8);
-}
-.brand{display:flex;align-items:center;gap:10px;min-width:0}
-.brand-mark{
-  width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
-  background:linear-gradient(135deg,var(--brand),var(--brand2));color:white;
-  box-shadow:0 6px 16px rgba(23,63,112,.18);font-weight:900;font-size:19px
-}
-.brand-text{min-width:0}
-.brand-text strong{display:block;font-size:14px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.brand-text span{font-size:10px;color:var(--muted)}
-.install-btn{
-  display:inline-block;border:0;border-radius:11px;background:var(--brand);color:#fff;
-  padding:9px 11px;font-size:12px;font-weight:800;white-space:nowrap
-}
-main{padding:16px}
-.view{display:none;animation:fade .16s ease}
-.view.active{display:block}
-@keyframes fade{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:none}}
-.page-title{margin:2px 0 14px}
-.page-title h1{font-size:24px;letter-spacing:-.02em;margin:0 0 5px}
-.page-title p{font-size:13px;color:var(--muted);margin:0;line-height:1.45}
-.card{
-  background:var(--surface);
-  border:1px solid var(--line);
-  border-radius:var(--r);
-  padding:16px;
-  box-shadow:var(--shadow);
-  margin-bottom:14px;
-}
-.hero{
-  position:relative;overflow:hidden;
-  background:linear-gradient(135deg,#153a67 0%,#255e98 68%,#2e74b5 100%);
-  color:#fff;border:0;padding:19px;
-}
-.hero:after{
-  content:"";position:absolute;width:170px;height:170px;border-radius:50%;
-  background:rgba(255,255,255,.07);right:-60px;top:-65px
-}
-.hero-top{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:850;opacity:.73}
-.hero-date{font-size:11px;opacity:.8;text-align:right}
-.hero h2{position:relative;z-index:1;font-size:27px;line-height:1.1;margin:9px 0 4px;max-width:78%}
-.hero-bank{position:relative;z-index:1;font-size:12px;opacity:.78;min-height:17px}
-.days{position:relative;z-index:1;font-size:45px;font-weight:900;line-height:1;margin:16px 0 4px;letter-spacing:-.04em}
-.days span{font-size:15px;font-weight:700;letter-spacing:0;opacity:.82}
-.hero-message{position:relative;z-index:1;font-size:12px;line-height:1.45;opacity:.86;margin-top:9px}
-.hero-meta{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:15px}
-.hero-meta>div{padding:10px 11px;border-radius:13px;background:rgba(255,255,255,.11)}
-.hero-meta b{font-size:10px;display:block;opacity:.72;margin-bottom:3px}
-.hero-meta span{font-size:13px;font-weight:700}
-.no-cards-hero{text-align:left}
-.no-cards-hero h2{max-width:100%}
-.cta{
-  position:relative;z-index:2;margin-top:14px;border:0;background:white;color:var(--brand);
-  border-radius:12px;padding:11px 14px;font-size:12px;font-weight:850
-}
-.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
-.section-head h2{font-size:17px;margin:0}
-.section-head .small{font-size:11px;color:var(--muted)}
-.compare{display:grid;gap:8px}
-.compare-row{
-  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;
-  padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff
-}
-.compare-row.best{background:#f1faf5;border-color:#cde8d7}
-.compare-row strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.compare-meta{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.35}
-.pill{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:850;white-space:nowrap}
-.pill.good{background:var(--good-soft);color:var(--good)}
-.pill.warn{background:var(--warn-soft);color:var(--warn)}
-.pill.bad{background:var(--danger-soft);color:var(--danger)}
-.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.quick-btn{
-  text-align:left;border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px;color:var(--text)
-}
-.quick-btn b{display:block;font-size:12px;margin-bottom:3px}.quick-btn span{font-size:10px;color:var(--muted)}
-.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:11px}
-.stat b{display:block;font-size:20px;line-height:1.1}.stat span{font-size:9px;color:var(--muted);line-height:1.3;display:block;margin-top:3px}
-.field{margin-bottom:11px}
-.field label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:6px}
-input{
-  width:100%;border:1px solid #d7dde7;border-radius:12px;background:#fff;color:var(--text);
-  padding:12px;min-height:44px;outline:none
-}
-input:focus{border-color:#8db2d9;box-shadow:0 0 0 3px rgba(40,103,166,.08)}
-.form-grid{display:grid;grid-template-columns:1fr;gap:0}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-.btn{border:0;border-radius:12px;padding:11px 14px;font-weight:850;font-size:12px}
-.primary{background:var(--brand);color:#fff}
-.secondary{background:#eef1f5;color:#344054}
-.ghost{background:#fff;border:1px solid var(--line);color:#344054}
-.danger{background:#fff0f0;color:var(--danger);border:1px solid #efcccc}
-.full{width:100%}
-.note{
-  margin-top:12px;padding:12px;border-radius:13px;background:#fff8e8;border:1px solid #efdeb3;
-  color:#6e4c00;font-size:11px;line-height:1.45
-}
-.card-list{display:grid;gap:9px}
-.credit-card{
-  border:1px solid var(--line);border-radius:16px;padding:13px;background:#fff;
-  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center
-}
-.credit-card strong{font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card-sub{font-size:10px;color:var(--muted);line-height:1.4;margin-top:3px}
-.row-actions{display:flex;gap:5px}
-.icon-btn{border:0;background:#eef1f5;color:#344054;border-radius:10px;padding:8px;font-size:10px;font-weight:800}
-.empty{text-align:center;padding:24px 12px;color:var(--muted);font-size:12px;border:1px dashed #d7dde7;border-radius:14px}
-.sim-summary{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.sim-summary .field{margin:0}
-.calendar-toolbar{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;margin-bottom:12px}
-.calendar-toolbar .field{margin:0}
-.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
-.dow{text-align:center;font-size:9px;color:var(--muted);font-weight:850;padding:3px}
-.day{
-  min-height:63px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:5px;cursor:pointer
-}
-.day.blank{background:transparent;border-color:transparent;cursor:default}
-.day.today{border-color:#80a9d2;box-shadow:inset 0 0 0 1px #80a9d2}
-.day.selected{background:var(--brand-soft);border-color:#86acd3}
-.day-num{font-size:10px;font-weight:900}
-.day-card{font-size:8px;line-height:1.15;font-weight:850;color:var(--brand);margin-top:7px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.day-days{font-size:8px;color:var(--good);font-weight:800;margin-top:2px}
-.calendar-detail{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
-.backup-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.privacy{
-  display:flex;gap:9px;align-items:flex-start;background:#f8fafc;border:1px solid var(--line);
-  border-radius:14px;padding:11px;margin-top:12px
-}
-.privacy b{font-size:11px;display:block;margin-bottom:2px}.privacy span{font-size:10px;color:var(--muted);line-height:1.4}
-.footer-note{font-size:10px;color:var(--muted);line-height:1.5;padding:0 2px 10px}
-.bottom-nav{
-  position:fixed;z-index:30;left:0;right:0;bottom:0;
-  display:grid;grid-template-columns:repeat(4,1fr);
-  padding:7px 8px calc(7px + env(safe-area-inset-bottom));
-  background:rgba(255,255,255,.96);backdrop-filter:blur(16px);
-  border-top:1px solid var(--line)
-}
-.nav-btn{
-  border:0;background:transparent;color:#7a8495;border-radius:12px;padding:5px 3px 4px;
-  font-size:9px;font-weight:800
-}
-.nav-btn .ico{display:block;font-size:20px;line-height:1;margin-bottom:4px}
-.nav-btn.active{color:var(--brand);background:var(--brand-soft)}
-.version{font-size:9px;color:#98a2b3;text-align:center;margin-top:5px}
-.toast{
-  position:fixed;z-index:50;left:50%;bottom:calc(var(--nav-h) + 16px + env(safe-area-inset-bottom));
-  transform:translate(-50%,20px);opacity:0;pointer-events:none;
-  max-width:calc(100vw - 30px);background:#172033;color:#fff;padding:10px 13px;border-radius:12px;
-  font-size:11px;box-shadow:0 12px 30px rgba(0,0,0,.18);transition:.2s
-}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-@media(min-width:700px){
-  main{padding:22px}
-  .page-title h1{font-size:28px}
-  .form-grid{grid-template-columns:1fr 1fr;gap:0 12px}
-  .home-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;align-items:start}
-  .home-grid>.card,.home-grid>.hero{margin-bottom:0}
-  .hero{min-height:322px;display:flex;flex-direction:column}
-  .hero-meta{margin-top:auto}
-  .day{min-height:82px;padding:7px}.day-card,.day-days{font-size:9px}
-  .bottom-nav{left:50%;right:auto;transform:translateX(-50%);width:min(620px,calc(100% - 24px));border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;box-shadow:0 -8px 24px rgba(25,45,75,.08)}
-}
-@media(min-width:980px){
-  .appbar{border-radius:0 0 16px 16px}
-  main{padding:26px 24px}
-  .calendar-grid{gap:7px}
-}
+*{box-sizing:border-box}html{background:var(--bg)}
+body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:linear-gradient(180deg,#f8fafc 0%,var(--bg) 46%);padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
+button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(40,103,166,.18);outline-offset:2px}
+.app-shell{max-width:1080px;margin:0 auto}.appbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;background:rgba(248,250,252,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(227,231,238,.8)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}.brand-mark{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 6px 16px rgba(23,63,112,.18);font-weight:900;font-size:19px}.brand-text{min-width:0}.brand-text strong{display:block;font-size:14px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand-text span{font-size:10px;color:var(--muted)}
+.install-btn{display:inline-block;border:0;border-radius:11px;background:var(--brand);color:#fff;padding:9px 11px;font-size:11px;font-weight:800;white-space:nowrap}
+main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{display:block}@keyframes fade{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:none}}
+.page-title{margin:2px 0 14px}.page-title h1{font-size:24px;letter-spacing:-.02em;margin:0 0 5px}.page-title p{font-size:13px;color:var(--muted);margin:0;line-height:1.45}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);margin-bottom:14px}.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#153a67 0%,#255e98 68%,#2e74b5 100%);color:#fff;border:0;padding:19px}.hero:after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.07);right:-60px;top:-65px}.hero-top{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:850;opacity:.73}.hero-date{font-size:11px;opacity:.8;text-align:right}.hero h2{position:relative;z-index:1;font-size:27px;line-height:1.1;margin:9px 0 4px;max-width:80%}.hero-bank{position:relative;z-index:1;font-size:12px;opacity:.78;min-height:17px}.days{position:relative;z-index:1;font-size:45px;font-weight:900;line-height:1;margin:16px 0 4px;letter-spacing:-.04em}.days span{font-size:15px;font-weight:700;letter-spacing:0;opacity:.82}.hero-message{position:relative;z-index:1;font-size:12px;line-height:1.45;opacity:.86;margin-top:9px}.hero-meta{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:15px}.hero-meta>div{padding:10px 11px;border-radius:13px;background:rgba(255,255,255,.11)}.hero-meta b{font-size:10px;display:block;opacity:.72;margin-bottom:3px}.hero-meta span{font-size:13px;font-weight:700}.no-cards-hero h2{max-width:100%}.cta{position:relative;z-index:2;margin-top:14px;border:0;background:#fff;color:var(--brand);border-radius:12px;padding:11px 14px;font-size:12px;font-weight:850}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}.section-head h2{font-size:17px;margin:0}.small{font-size:11px;color:var(--muted)}
+.compare,.stack{display:grid;gap:8px}.compare-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}.compare-row.best{background:#f1faf5;border-color:#cde8d7}.compare-row strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.compare-meta{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.4}.pill{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:850;white-space:nowrap}.pill.good{background:var(--good-soft);color:var(--good)}.pill.warn{background:var(--warn-soft);color:var(--warn)}.pill.bad{background:var(--danger-soft);color:var(--danger)}.pill.neutral{background:#eef1f5;color:#475467}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.quick-btn{text-align:left;border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px;color:var(--text)}.quick-btn b{display:block;font-size:12px;margin-bottom:3px}.quick-btn span{font-size:10px;color:var(--muted)}
+.cash-card{background:linear-gradient(180deg,#fff,#fbfcfe)}.cash-top{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}.cash-top .field{margin:0}.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.metric{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:11px;min-width:0}.metric b{display:block;font-size:18px;line-height:1.15;overflow:hidden;text-overflow:ellipsis}.metric span{font-size:9px;color:var(--muted);line-height:1.3;display:block;margin-top:3px}.metric.goodmetric{background:#f1faf5;border-color:#d0e9da}.metric.badmetric{background:#fff5f5;border-color:#f0d2d2}
+.field{margin-bottom:11px}.field label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:6px}input,select{width:100%;border:1px solid #d7dde7;border-radius:12px;background:#fff;color:var(--text);padding:12px;min-height:44px;outline:none}input:focus,select:focus{border-color:#8db2d9;box-shadow:0 0 0 3px rgba(40,103,166,.08)}
+.form-grid{display:grid;grid-template-columns:1fr;gap:0}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:12px;padding:11px 14px;font-weight:850;font-size:12px}.primary{background:var(--brand);color:#fff}.secondary{background:#eef1f5;color:#344054}.ghost{background:#fff;border:1px solid var(--line);color:#344054}.danger{background:#fff0f0;color:var(--danger);border:1px solid #efcccc}.full{width:100%}.note{margin-top:12px;padding:12px;border-radius:13px;background:#fff8e8;border:1px solid #efdeb3;color:#6e4c00;font-size:11px;line-height:1.45}
+.card-list{display:grid;gap:9px}.credit-card,.purchase-row,.payment-row{border:1px solid var(--line);border-radius:16px;padding:13px;background:#fff;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}.credit-card strong,.purchase-row strong,.payment-row strong{font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.card-sub{font-size:10px;color:var(--muted);line-height:1.4;margin-top:3px}.row-actions{display:flex;gap:5px;align-items:center}.icon-btn{border:0;background:#eef1f5;color:#344054;border-radius:10px;padding:8px;font-size:10px;font-weight:800}.money{font-weight:900;font-size:14px;text-align:right}.empty{text-align:center;padding:24px 12px;color:var(--muted);font-size:12px;border:1px dashed #d7dde7;border-radius:14px}
+.purchase-preview{margin-top:10px;background:var(--brand-soft);border:1px solid #d7e5f5;border-radius:14px;padding:11px;display:none}.purchase-preview.show{display:block}.purchase-preview b{font-size:11px}.purchase-preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px}.purchase-preview-grid div{background:#fff;border-radius:10px;padding:8px}.purchase-preview-grid span{display:block;font-size:9px;color:var(--muted)}.purchase-preview-grid strong{font-size:11px}
+.filter-row{display:flex;gap:7px;overflow:auto;padding-bottom:2px;margin-bottom:10px}.filter-btn{border:1px solid var(--line);background:#fff;color:#667085;border-radius:999px;padding:7px 10px;font-size:10px;font-weight:800;white-space:nowrap}.filter-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.payment-row.overdue{border-color:#efcccc;background:#fff8f8}.payment-row.soon{border-color:#eadcae;background:#fffdf5}.payment-date{font-size:10px;font-weight:800;color:var(--muted);margin-bottom:4px}.payment-actions{display:flex;flex-direction:column;align-items:flex-end;gap:6px}.payment-actions button{padding:7px 9px}.payment-summary{font-size:10px;color:var(--muted);line-height:1.4;margin-top:3px}
+.sim-summary{display:grid;grid-template-columns:1fr 1fr;gap:9px}.sim-summary .field{margin:0}.calendar-toolbar{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;margin-bottom:12px}.calendar-toolbar .field{margin:0}.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.dow{text-align:center;font-size:9px;color:var(--muted);font-weight:850;padding:3px}.day{min-height:63px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:5px;cursor:pointer}.day.blank{background:transparent;border-color:transparent;cursor:default}.day.today{border-color:#80a9d2;box-shadow:inset 0 0 0 1px #80a9d2}.day.selected{background:var(--brand-soft);border-color:#86acd3}.day-num{font-size:10px;font-weight:900}.day-card{font-size:8px;line-height:1.15;font-weight:850;color:var(--brand);margin-top:7px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.day-days{font-size:8px;color:var(--good);font-weight:800;margin-top:2px}.calendar-detail{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.backup-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.privacy{display:flex;gap:9px;align-items:flex-start;background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:11px;margin-top:12px}.privacy b{font-size:11px;display:block;margin-bottom:2px}.privacy span{font-size:10px;color:var(--muted);line-height:1.4}.footer-note{font-size:10px;color:var(--muted);line-height:1.5;padding:0 2px 10px}
+.bottom-nav{position:fixed;z-index:30;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);padding:7px 5px calc(7px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-top:1px solid var(--line)}.nav-btn{border:0;background:transparent;color:#7a8495;border-radius:11px;padding:5px 1px 4px;font-size:8px;font-weight:800;min-width:0}.nav-btn .ico{display:block;font-size:19px;line-height:1;margin-bottom:4px}.nav-btn.active{color:var(--brand);background:var(--brand-soft)}
+.toast{position:fixed;z-index:50;left:50%;bottom:calc(var(--nav-h) + 16px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;pointer-events:none;max-width:calc(100vw - 30px);background:#172033;color:#fff;padding:10px 13px;border-radius:12px;font-size:11px;box-shadow:0 12px 30px rgba(0,0,0,.18);transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:430px){.brand-text span{display:none}.install-btn{padding:8px 9px}.metric b{font-size:16px}.purchase-preview-grid{grid-template-columns:1fr 1fr 1fr}}
+@media(min-width:700px){main{padding:22px}.page-title h1{font-size:28px}.form-grid{grid-template-columns:1fr 1fr;gap:0 12px}.home-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;align-items:start}.home-grid>.card,.home-grid>.hero{margin-bottom:0}.hero{min-height:322px;display:flex;flex-direction:column}.hero-meta{margin-top:auto}.day{min-height:82px;padding:7px}.day-card,.day-days{font-size:9px}.bottom-nav{left:50%;right:auto;transform:translateX(-50%);width:min(680px,calc(100% - 24px));border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;box-shadow:0 -8px 24px rgba(25,45,75,.08)}.nav-btn{font-size:9px}.purchase-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}}
+@media(min-width:980px){.appbar{border-radius:0 0 16px 16px}main{padding:26px 24px}.calendar-grid{gap:7px}.dashboard-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}.dashboard-two>.card{margin-bottom:0}}
 </style>
 </head>
 <body>
 <div class="app-shell">
 <header class="appbar">
-  <div class="brand">
-    <div class="brand-mark">◈</div>
-    <div class="brand-text">
-      <strong>Optimizador de Tarjetas</strong>
-      <span>Financiamiento de corto plazo sin intereses · v1.1.1</span>
-    </div>
-  </div>
+  <div class="brand"><div class="brand-mark">◈</div><div class="brand-text"><strong>Optimizador de Tarjetas</strong><span>Flujo de caja y período de gracia · v1.3</span></div></div>
   <button id="installBtn" class="install-btn">Instalar app</button>
 </header>
-
 <main>
 <section id="homeView" class="view active">
-  <div class="page-title">
-    <h1>¿Qué tarjeta uso hoy?</h1>
-    <p>Compara automáticamente tus ciclos de corte y pago para maximizar el período de gracia.</p>
-  </div>
-
+  <div class="page-title"><h1>¿Qué tarjeta uso hoy?</h1><p>Maximiza el período de gracia sin perder de vista el dinero que ya está comprometido.</p></div>
   <div class="home-grid">
     <div id="todayHero"></div>
+    <div class="card"><div class="section-head"><h2>Ranking de hoy</h2><span id="todayLabel" class="small"></span></div><div id="todayRanking" class="compare"></div></div>
+  </div>
+
+  <div class="card cash-card">
+    <div class="section-head"><h2>Capital y obligaciones</h2><span class="small">v1.2</span></div>
+    <div class="cash-top"><div class="field"><label>Capital disponible en cuentas / efectivo</label><input id="liquidFunds" type="number" min="0" step="0.01" placeholder="Ej. 8500"></div><button id="saveFunds" class="btn secondary">Guardar</button></div>
+    <div class="metric-grid">
+      <div class="metric"><b id="metricFunds">—</b><span>Capital registrado</span></div>
+      <div class="metric"><b id="metricCommitted">$0.00</b><span>Comprometido en compras pendientes</span></div>
+      <div id="freeMetricBox" class="metric goodmetric"><b id="metricFree">—</b><span>Capital realmente libre</span></div>
+    </div>
+    <div class="small" style="margin-top:9px">El capital comprometido cuenta cada compra pendiente una sola vez; los pagos próximos son una agrupación de esas mismas compras, no se vuelven a restar.</div>
+  </div>
+
+  <div class="dashboard-two">
     <div class="card">
-      <div class="section-head">
-        <h2>Ranking de hoy</h2>
-        <span id="todayLabel" class="small"></span>
-      </div>
-      <div id="todayRanking" class="compare"></div>
+      <div class="section-head"><h2>Pagos próximos</h2><button class="btn ghost" data-go="purchasesView">Ver compras</button></div>
+      <div id="upcomingPayments" class="stack"></div>
+    </div>
+    <div class="card">
+      <div class="section-head"><h2>Accesos rápidos</h2></div>
+      <div class="quick-grid"><button class="quick-btn" data-go="purchasesView"><b>Registrar compra</b><span>Asigna automáticamente su ciclo</span></button><button class="quick-btn" data-go="simulateView"><b>Simular compra</b><span>Compara antes de gastar</span></button></div>
+      <div class="quick-grid" style="margin-top:9px"><button class="quick-btn" data-go="calendarView"><b>Ver calendario</b><span>Mejor tarjeta cada día</span></button><button class="quick-btn" data-go="cardsView"><b>Gestionar tarjetas</b><span>Fechas y límites</span></button></div>
     </div>
   </div>
-
-  <div class="card">
-    <div class="section-head"><h2>Accesos rápidos</h2></div>
-    <div class="quick-grid">
-      <button class="quick-btn" data-go="simulateView"><b>Simular una compra</b><span>Elige fecha y monto</span></button>
-      <button class="quick-btn" data-go="calendarView"><b>Ver calendario</b><span>Mejor tarjeta cada día</span></button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="section-head"><h2>Resumen</h2></div>
-    <div class="stat-grid">
-      <div class="stat"><b id="statCards">0</b><span>Tarjetas</span></div>
-      <div class="stat"><b id="statDays">—</b><span>Máx. días hoy</span></div>
-      <div class="stat"><b id="statAvailable">—</b><span>Crédito disponible</span></div>
-    </div>
-  </div>
-  <div class="footer-note">El período estimado depende de cuándo el emisor contabilice la transacción. En la fecha exacta de corte se usa un supuesto conservador.</div>
+  <div class="footer-note">La app funciona como herramienta de planificación. Verifica siempre el estado de cuenta del emisor y paga el monto requerido para no generar intereses antes de su fecha límite.</div>
 </section>
 
 <section id="cardsView" class="view">
-  <div class="page-title">
-    <h1>Mis tarjetas</h1>
-    <p>Configura las fechas que determinan el ciclo de facturación de cada tarjeta.</p>
-  </div>
-
+  <div class="page-title"><h1>Mis tarjetas</h1><p>Configura las fechas que determinan el ciclo de facturación de cada tarjeta.</p></div>
   <div class="card">
     <div class="section-head"><h2 id="formTitle">Agregar tarjeta</h2></div>
     <div class="form-grid">
@@ -287,391 +97,229 @@ input:focus{border-color:#8db2d9;box-shadow:0 0 0 3px rgba(40,103,166,.08)}
       <div class="field"><label>Límite de crédito (opcional)</label><input id="creditLimit" type="number" min="0" step="0.01" placeholder="Ej. 3000"></div>
       <div class="field"><label>Saldo utilizado actual (opcional)</label><input id="currentUsed" type="number" min="0" step="0.01" placeholder="Ej. 450"></div>
     </div>
-    <div class="actions">
-      <button id="saveCard" class="btn primary">Guardar tarjeta</button>
-      <button id="cancelEdit" class="btn secondary" style="display:none">Cancelar</button>
+    <div class="actions"><button id="saveCard" class="btn primary">Guardar tarjeta</button><button id="cancelEdit" class="btn secondary" style="display:none">Cancelar</button></div>
+    <div class="note"><b>Fecha exacta de corte:</b> la app usa un supuesto conservador y considera que la compra podría entrar en ese mismo estado de cuenta.</div>
+  </div>
+  <div class="card"><div class="section-head"><h2>Tarjetas registradas</h2><button id="clearAll" class="btn danger" style="display:none">Eliminar todas</button></div><div id="cardsList" class="card-list"></div></div>
+  <div class="card"><div class="section-head"><h2>Respaldo local</h2></div><div class="backup-grid"><button id="exportBtn" class="btn ghost">Exportar todo</button><button id="importBtn" class="btn ghost">Importar respaldo</button><input id="importFile" type="file" accept="application/json" style="display:none"></div><div class="privacy"><div>🔒</div><div><b>Privacidad</b><span>Tarjetas, compras y capital se guardan localmente en este navegador. No se requieren credenciales bancarias.</span></div></div></div>
+</section>
+
+<section id="purchasesView" class="view">
+  <div class="page-title"><h1>Compras</h1><p>Registra compras para saber en qué fecha tendrás que reservar y desembolsar el capital.</p></div>
+  <div class="card">
+    <div class="section-head"><h2>Registrar compra</h2><span class="small">v1.3</span></div>
+    <div class="purchase-form-grid">
+      <div class="field"><label>Tarjeta</label><select id="purchaseCard"></select></div>
+      <div class="field"><label>Fecha de compra</label><input id="recordPurchaseDate" type="date"></div>
+      <div class="field"><label>Monto</label><input id="recordAmount" type="number" min="0.01" step="0.01" placeholder="Ej. 480"></div>
+      <div class="field"><label>Categoría</label><select id="recordCategory"><option>Supermercado</option><option>Combustible</option><option>Restaurante</option><option>Salud</option><option>Servicios</option><option>Compras</option><option>Viajes</option><option>Educación</option><option>Entretenimiento</option><option>Otro</option></select></div>
+      <div class="field"><label>Descripción (opcional)</label><input id="recordDescription" placeholder="Ej. Super Selectos"></div>
     </div>
-    <div class="note"><b>Fecha de corte:</b> si una compra ocurre exactamente ese día, la app asume que podría entrar en el estado de cuenta actual. Para maximizar el plazo, normalmente es más seguro comprar después del corte.</div>
+    <div id="purchasePreview" class="purchase-preview"></div>
+    <button id="savePurchase" class="btn primary full" style="margin-top:11px">Guardar compra</button>
   </div>
 
   <div class="card">
-    <div class="section-head">
-      <h2>Tarjetas registradas</h2>
-      <button id="clearAll" class="btn danger" style="display:none">Eliminar todas</button>
-    </div>
-    <div id="cardsList" class="card-list"></div>
-  </div>
-
-  <div class="card">
-    <div class="section-head"><h2>Respaldo local</h2></div>
-    <div class="backup-grid">
-      <button id="exportBtn" class="btn ghost">Exportar datos</button>
-      <button id="importBtn" class="btn ghost">Importar datos</button>
-      <input id="importFile" type="file" accept="application/json" style="display:none">
-    </div>
-    <div class="privacy">
-      <div>🔒</div>
-      <div><b>Privacidad</b><span>La información se guarda en el navegador de este dispositivo. La app no necesita enviar tus tarjetas a un servidor.</span></div>
-    </div>
+    <div class="section-head"><h2>Historial</h2><span id="purchaseCount" class="small"></span></div>
+    <div class="filter-row"><button class="filter-btn active" data-filter="pending">Pendientes</button><button class="filter-btn" data-filter="paid">Pagadas</button><button class="filter-btn" data-filter="all">Todas</button></div>
+    <div id="purchaseList" class="stack"></div>
   </div>
 </section>
 
 <section id="simulateView" class="view">
-  <div class="page-title">
-    <h1>Simular compra</h1>
-    <p>Indica cuándo comprarías y, si quieres, el monto para considerar el crédito disponible.</p>
-  </div>
-
-  <div class="card">
-    <div class="sim-summary">
-      <div class="field"><label>Fecha de compra</label><input id="purchaseDate" type="date"></div>
-      <div class="field"><label>Monto (opcional)</label><input id="purchaseAmount" type="number" min="0" step="0.01" placeholder="Ej. 500"></div>
-    </div>
-    <button id="calculateBtn" class="btn primary full" style="margin-top:11px">Calcular mejor tarjeta</button>
-  </div>
+  <div class="page-title"><h1>Simular compra</h1><p>Compara antes de comprar; el monto puede descartar tarjetas sin crédito disponible suficiente.</p></div>
+  <div class="card"><div class="sim-summary"><div class="field"><label>Fecha de compra</label><input id="purchaseDate" type="date"></div><div class="field"><label>Monto (opcional)</label><input id="purchaseAmount" type="number" min="0" step="0.01" placeholder="Ej. 500"></div></div><button id="calculateBtn" class="btn primary full" style="margin-top:11px">Calcular mejor tarjeta</button></div>
   <div id="simulationHero"></div>
-  <div class="card">
-    <div class="section-head"><h2>Comparación</h2><span class="small">Mayor plazo primero</span></div>
-    <div id="simulationRanking" class="compare"></div>
-  </div>
+  <div class="card"><div class="section-head"><h2>Comparación</h2><span class="small">Mayor plazo primero</span></div><div id="simulationRanking" class="compare"></div></div>
 </section>
 
 <section id="calendarView" class="view">
-  <div class="page-title">
-    <h1>Calendario óptimo</h1>
-    <p>Consulta qué tarjeta maximiza el plazo estimado en cada día del mes.</p>
-  </div>
-  <div class="card">
-    <div class="calendar-toolbar">
-      <div class="field"><label>Mes</label><input id="calendarMonth" type="month"></div>
-      <button id="goTodayMonth" class="btn secondary">Hoy</button>
-    </div>
-    <div id="calendarGrid" class="calendar-grid"></div>
-    <div id="calendarDetail" class="calendar-detail"></div>
-  </div>
+  <div class="page-title"><h1>Calendario óptimo</h1><p>Consulta qué tarjeta maximiza el plazo estimado en cada día del mes.</p></div>
+  <div class="card"><div class="calendar-toolbar"><div class="field"><label>Mes</label><input id="calendarMonth" type="month"></div><button id="goTodayMonth" class="btn secondary">Hoy</button></div><div id="calendarGrid" class="calendar-grid"></div><div id="calendarDetail" class="calendar-detail"></div></div>
 </section>
 </main>
 </div>
-
 <nav class="bottom-nav" aria-label="Navegación principal">
   <button class="nav-btn active" data-view="homeView"><span class="ico">⌂</span>Inicio</button>
   <button class="nav-btn" data-view="cardsView"><span class="ico">▣</span>Tarjetas</button>
+  <button class="nav-btn" data-view="purchasesView"><span class="ico">＋</span>Compras</button>
   <button class="nav-btn" data-view="simulateView"><span class="ico">◎</span>Simular</button>
   <button class="nav-btn" data-view="calendarView"><span class="ico">▦</span>Calendario</button>
 </nav>
-
 <div id="toast" class="toast"></div>
-
 <script>
 (() => {
-  // Conserva la misma clave de v1 para mantener las tarjetas ya registradas.
-  const STORAGE_KEY = "creditCardOptimizer.cards.v1";
-  let cards = [];
-  try { cards = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { cards = []; }
-  let editingId = null;
-  let deferredPrompt = null;
-  let selectedCalendarDate = null;
-  const $ = id => document.getElementById(id);
-
-  const moneyFmt = new Intl.NumberFormat("es-SV",{style:"currency",currency:"USD",maximumFractionDigits:2});
-  const dateFmt = new Intl.DateTimeFormat("es-SV",{day:"2-digit",month:"short",year:"numeric"});
-  const dateLongFmt = new Intl.DateTimeFormat("es-SV",{weekday:"long",day:"numeric",month:"long"});
-
-  function esc(s){return String(s ?? "").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-  function money(v){return moneyFmt.format(Number(v || 0))}
+  const CARDS_KEY="creditCardOptimizer.cards.v1";
+  const TX_KEY="creditCardOptimizer.transactions.v1";
+  const SETTINGS_KEY="creditCardOptimizer.settings.v1";
+  let cards=[], transactions=[], settings={liquidFunds:null}, editingId=null, deferredPrompt=null, selectedCalendarDate=null, purchaseFilter="pending";
+  try{cards=JSON.parse(localStorage.getItem(CARDS_KEY)||"[]")}catch{cards=[]}
+  try{transactions=JSON.parse(localStorage.getItem(TX_KEY)||"[]")}catch{transactions=[]}
+  try{settings={...settings,...JSON.parse(localStorage.getItem(SETTINGS_KEY)||"{}")}}catch{}
+  const $=id=>document.getElementById(id);
+  const moneyFmt=new Intl.NumberFormat("es-SV",{style:"currency",currency:"USD",maximumFractionDigits:2});
+  const dateFmt=new Intl.DateTimeFormat("es-SV",{day:"2-digit",month:"short",year:"numeric"});
+  const dateLongFmt=new Intl.DateTimeFormat("es-SV",{weekday:"long",day:"numeric",month:"long"});
+  function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+  function money(v){return moneyFmt.format(Number(v||0))}
   function localISO(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+  function parseISO(s){return new Date(`${s}T00:00:00`)}
   function monthISO(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`}
   function dim(y,m){return new Date(y,m+1,0).getDate()}
   function clampDate(y,m,day){return new Date(y,m,Math.min(Number(day),dim(y,m)))}
   function addMonthFrom(d,day){return clampDate(d.getFullYear(),d.getMonth()+1,day)}
   function norm(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
   function diffDays(a,b){return Math.round((norm(b)-norm(a))/86400000)}
-  function uid(){return (crypto.randomUUID && crypto.randomUUID()) || `${Date.now()}-${Math.random()}`}
-  function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(cards))}
-  function toast(msg){
-    const el=$("toast");el.textContent=msg;el.classList.add("show");
-    clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.remove("show"),2200);
-  }
+  function uid(){return (crypto.randomUUID&&crypto.randomUUID())||`${Date.now()}-${Math.random()}`}
+  function saveCards(){localStorage.setItem(CARDS_KEY,JSON.stringify(cards))}
+  function saveTx(){localStorage.setItem(TX_KEY,JSON.stringify(transactions))}
+  function saveSettings(){localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings))}
+  function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add("show");clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.remove("show"),2300)}
+  function getCard(id){return cards.find(c=>c.id===id)}
 
   function calcCard(card,purchase,amount=null){
     purchase=norm(purchase);
     let cutoff=clampDate(purchase.getFullYear(),purchase.getMonth(),card.cutoffDay);
     const onCut=purchase.getTime()===cutoff.getTime();
-    if(purchase>cutoff) cutoff=addMonthFrom(cutoff,card.cutoffDay);
-
+    if(purchase>cutoff)cutoff=addMonthFrom(cutoff,card.cutoffDay);
     let due=clampDate(cutoff.getFullYear(),cutoff.getMonth(),card.paymentDay);
-    if(due<=cutoff) due=addMonthFrom(due,card.paymentDay);
-
+    if(due<=cutoff)due=addMonthFrom(due,card.paymentDay);
     const available=card.creditLimit==null?null:Math.max(0,Number(card.creditLimit)-Number(card.currentUsed||0));
-    const eligible=amount==null || amount<=0 || available==null || amount<=available;
-
+    const eligible=amount==null||amount<=0||available==null||amount<=available;
     return {...card,cutoff,due,days:diffDays(purchase,due),available,eligible,onCut};
   }
+  function ranking(date,amount=null){return cards.map(c=>calcCard(c,date,amount)).sort((a,b)=>{if(a.eligible!==b.eligible)return a.eligible?-1:1;return b.days-a.days||String(a.name).localeCompare(String(b.name))})}
 
-  function ranking(date,amount=null){
-    return cards.map(c=>calcCard(c,date,amount)).sort((a,b)=>{
-      if(a.eligible!==b.eligible) return a.eligible ? -1 : 1;
-      return b.days-a.days || String(a.name).localeCompare(String(b.name));
+  function normalizeTransaction(tx){
+    const card=getCard(tx.cardId);
+    let cutoffDate=tx.cutoffDate,dueDate=tx.dueDate;
+    if((!cutoffDate||!dueDate)&&card&&tx.date){const calc=calcCard(card,parseISO(tx.date));cutoffDate=localISO(calc.cutoff);dueDate=localISO(calc.due)}
+    return {...tx,status:tx.status||"pending",cutoffDate,dueDate};
+  }
+  transactions=transactions.map(normalizeTransaction);
+
+  function pendingTx(){return transactions.filter(t=>t.status!=="paid")}
+  function committedTotal(){return pendingTx().reduce((s,t)=>s+Number(t.amount||0),0)}
+  function paymentGroups(){
+    const map=new Map();
+    pendingTx().forEach(t=>{
+      const due=t.dueDate||"9999-12-31", key=`${t.cardId}|${due}`;
+      if(!map.has(key))map.set(key,{key,cardId:t.cardId,dueDate:due,total:0,count:0,txIds:[]});
+      const g=map.get(key);g.total+=Number(t.amount||0);g.count++;g.txIds.push(t.id);
     });
+    return [...map.values()].sort((a,b)=>a.dueDate.localeCompare(b.dueDate));
   }
 
   function renderHero(result,target,date,context="today"){
     const el=$(target);
-    if(!result){
-      el.innerHTML=`<div class="card hero no-cards-hero">
-        <div class="eyebrow">Comienza aquí</div>
-        <h2>Registra tu primera tarjeta</h2>
-        <div class="hero-message">Con la fecha de corte y pago podremos calcular automáticamente cuál te conviene usar.</div>
-        <button class="cta" data-go="cardsView">Agregar tarjeta</button>
-      </div>`;
-      bindGoButtons();
-      return;
-    }
-    const title=context==="today" ? "Mejor tarjeta para usar hoy" : "Mejor opción para esta compra";
-    const bank=result.bank ? esc(result.bank) : "&nbsp;";
-    el.innerHTML=`<div class="card hero">
-      <div class="hero-top">
-        <div class="eyebrow">${title}</div>
-        <div class="hero-date">${esc(dateLongFmt.format(date))}</div>
-      </div>
-      <h2>${esc(result.name)}</h2>
-      <div class="hero-bank">${bank}</div>
-      <div class="days">${result.days} <span>días aprox. hasta pagar</span></div>
-      <div class="hero-message">${result.onCut ? "⚠️ La compra coincide con el día de corte; se usa una estimación conservadora." : "La compra se proyecta al ciclo que ofrece el mayor plazo según tus fechas registradas."}</div>
-      <div class="hero-meta">
-        <div><b>Corte aplicable</b><span>${dateFmt.format(result.cutoff)}</span></div>
-        <div><b>Pago estimado</b><span>${dateFmt.format(result.due)}</span></div>
-      </div>
-    </div>`;
+    if(!result){el.innerHTML=`<div class="card hero no-cards-hero"><div class="eyebrow">Comienza aquí</div><h2>Registra tu primera tarjeta</h2><div class="hero-message">Con la fecha de corte y pago podremos calcular cuál te conviene usar.</div><button class="cta" data-go="cardsView">Agregar tarjeta</button></div>`;bindGoButtons();return}
+    const title=context==="today"?"Mejor tarjeta para usar hoy":"Mejor opción para esta compra";
+    el.innerHTML=`<div class="card hero"><div class="hero-top"><div class="eyebrow">${title}</div><div class="hero-date">${esc(dateLongFmt.format(date))}</div></div><h2>${esc(result.name)}</h2><div class="hero-bank">${result.bank?esc(result.bank):"&nbsp;"}</div><div class="days">${result.days} <span>días aprox. hasta pagar</span></div><div class="hero-message">${result.onCut?"⚠️ La compra coincide con el día de corte; se usa una estimación conservadora.":"La compra se proyecta al ciclo que ofrece el mayor plazo según tus fechas registradas."}</div><div class="hero-meta"><div><b>Corte aplicable</b><span>${dateFmt.format(result.cutoff)}</span></div><div><b>Pago estimado</b><span>${dateFmt.format(result.due)}</span></div></div></div>`;
+  }
+  function renderRanking(arr,target){
+    const el=$(target);if(!arr.length){el.innerHTML=`<div class="empty">No hay tarjetas registradas.</div>`;return}
+    const best=arr.find(x=>x.eligible);
+    el.innerHTML=arr.map(r=>`<div class="compare-row ${best&&r.id===best.id?"best":""}"><div><strong>${esc(r.name)}</strong><div class="compare-meta">${esc(r.bank||"Sin banco")} · corte ${r.cutoffDay} · pago ${r.paymentDay}${r.available!=null?` · disponible ${money(r.available)}`:""}</div></div><div>${!r.eligible?`<span class="pill bad">Cupo insuficiente</span>`:r.onCut?`<span class="pill warn">${r.days} días</span>`:`<span class="pill good">${r.days} días</span>`}</div></div>`).join("");
   }
 
-  function renderRanking(arr,target){
-    const el=$(target);
-    if(!arr.length){el.innerHTML=`<div class="empty">No hay tarjetas registradas.</div>`;return}
-    const best=arr.find(x=>x.eligible);
-    el.innerHTML=arr.map(r=>`
-      <div class="compare-row ${best&&r.id===best.id?"best":""}">
-        <div>
-          <strong>${esc(r.name)}</strong>
-          <div class="compare-meta">${esc(r.bank||"Sin banco")} · corte ${r.cutoffDay} · pago ${r.paymentDay}${r.available!=null?` · disponible ${money(r.available)}`:""}</div>
-        </div>
-        <div>${!r.eligible
-          ? `<span class="pill bad">Cupo insuficiente</span>`
-          : r.onCut
-            ? `<span class="pill warn">${r.days} días</span>`
-            : `<span class="pill good">${r.days} días</span>`}
-        </div>
-      </div>`).join("");
+  function renderCashFlow(){
+    $("liquidFunds").value=settings.liquidFunds==null?"":settings.liquidFunds;
+    const committed=committedTotal();
+    $("metricCommitted").textContent=money(committed);
+    if(settings.liquidFunds==null||settings.liquidFunds===""){$("metricFunds").textContent="—";$("metricFree").textContent="—";$("freeMetricBox").className="metric";return}
+    const funds=Number(settings.liquidFunds),free=funds-committed;
+    $("metricFunds").textContent=money(funds);$("metricFree").textContent=money(free);$("freeMetricBox").className=`metric ${free>=0?"goodmetric":"badmetric"}`;
+  }
+  $("saveFunds").onclick=()=>{const v=$("liquidFunds").value.trim();settings.liquidFunds=v===""?null:Math.max(0,Number(v));saveSettings();renderCashFlow();toast("Capital actualizado")};
+
+  function paymentState(g){
+    const today=norm(new Date()),due=parseISO(g.dueDate),days=diffDays(today,due);
+    if(days<0)return{cls:"overdue",pill:"bad",label:`Vencido hace ${Math.abs(days)} d`,days};
+    if(days===0)return{cls:"soon",pill:"warn",label:"Vence hoy",days};
+    if(days<=7)return{cls:"soon",pill:"warn",label:`Vence en ${days} d`,days};
+    return{cls:"",pill:"good",label:`En ${days} días`,days};
+  }
+  function renderUpcomingPayments(){
+    const groups=paymentGroups(),el=$("upcomingPayments");
+    if(!groups.length){el.innerHTML=`<div class="empty">No tienes compras pendientes registradas.</div>`;return}
+    el.innerHTML=groups.slice(0,4).map(g=>{const card=getCard(g.cardId),st=paymentState(g);return `<div class="payment-row ${st.cls}"><div><div class="payment-date">${dateFmt.format(parseISO(g.dueDate))}</div><strong>${esc(card?.name||"Tarjeta eliminada")}</strong><div class="payment-summary">${g.count} ${g.count===1?"compra":"compras"} pendiente${g.count===1?"":"s"}</div></div><div class="payment-actions"><div class="money">${money(g.total)}</div><span class="pill ${st.pill}">${st.label}</span><button class="icon-btn" data-paygroup="${esc(g.key)}">Marcar pagado</button></div></div>`}).join("");
+    document.querySelectorAll("[data-paygroup]").forEach(b=>b.onclick=()=>markPaymentGroup(b.dataset.paygroup));
+  }
+  function markPaymentGroup(key){
+    const g=paymentGroups().find(x=>x.key===key);if(!g)return;
+    if(!confirm(`¿Marcar ${money(g.total)} como pagado? Las compras de este ciclo dejarán de contar como capital comprometido.`))return;
+    const today=localISO(new Date());transactions=transactions.map(t=>g.txIds.includes(t.id)?{...t,status:"paid",paidAt:today}:t);saveTx();renderAll();toast("Ciclo marcado como pagado");
   }
 
   function renderHome(){
-    const today=new Date(),arr=ranking(today),best=arr.find(x=>x.eligible);
-    renderHero(best,"todayHero",today,"today");
-    renderRanking(arr,"todayRanking");
-    $("todayLabel").textContent=dateFmt.format(today);
-    $("statCards").textContent=cards.length;
-    $("statDays").textContent=best?best.days:"—";
-    const known=cards.filter(c=>c.creditLimit!=null);
-    if(known.length){
-      const total=known.reduce((s,c)=>s+Math.max(0,Number(c.creditLimit)-Number(c.currentUsed||0)),0);
-      $("statAvailable").textContent=money(total);
-    }else $("statAvailable").textContent="—";
+    const today=new Date(),arr=ranking(today),best=arr.find(x=>x.eligible);renderHero(best,"todayHero",today,"today");renderRanking(arr,"todayRanking");$("todayLabel").textContent=dateFmt.format(today);renderCashFlow();renderUpcomingPayments();
   }
 
+  function renderCardSelect(){
+    const select=$("purchaseCard"),current=select.value;
+    if(!cards.length){select.innerHTML=`<option value="">Primero registra una tarjeta</option>`;select.disabled=true}else{select.disabled=false;select.innerHTML=cards.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}${c.bank?` · ${esc(c.bank)}`:""}</option>`).join("");if(cards.some(c=>c.id===current))select.value=current}
+    renderPurchasePreview();
+  }
   function renderCards(){
-    $("clearAll").style.display=cards.length?"inline-block":"none";
-    const list=$("cardsList");
-    if(!cards.length){list.innerHTML=`<div class="empty">Aún no has registrado tarjetas.</div>`;return}
-    list.innerHTML=cards.map(c=>{
-      const available=c.creditLimit==null?null:Math.max(0,Number(c.creditLimit)-Number(c.currentUsed||0));
-      return `<div class="credit-card">
-        <div>
-          <strong>${esc(c.name)}</strong>
-          <div class="card-sub">${esc(c.bank||"Sin banco")} · corte ${c.cutoffDay} · pago ${c.paymentDay}${available!=null?` · disponible ${money(available)}`:""}</div>
-        </div>
-        <div class="row-actions">
-          <button class="icon-btn" data-edit="${c.id}">Editar</button>
-          <button class="icon-btn" data-delete="${c.id}">×</button>
-        </div>
-      </div>`;
-    }).join("");
-    document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editCard(b.dataset.edit));
-    document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteCard(b.dataset.delete));
+    $("clearAll").style.display=cards.length?"inline-block":"none";const list=$("cardsList");
+    if(!cards.length){list.innerHTML=`<div class="empty">Aún no has registrado tarjetas.</div>`;renderCardSelect();return}
+    list.innerHTML=cards.map(c=>{const available=c.creditLimit==null?null:Math.max(0,Number(c.creditLimit)-Number(c.currentUsed||0));return `<div class="credit-card"><div><strong>${esc(c.name)}</strong><div class="card-sub">${esc(c.bank||"Sin banco")} · corte ${c.cutoffDay} · pago ${c.paymentDay}${available!=null?` · disponible ${money(available)}`:""}</div></div><div class="row-actions"><button class="icon-btn" data-edit="${c.id}">Editar</button><button class="icon-btn" data-delete="${c.id}">×</button></div></div>`}).join("");
+    document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editCard(b.dataset.edit));document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteCard(b.dataset.delete));renderCardSelect();
   }
-
-  function resetForm(){
-    editingId=null;
-    ["cardName","bankName","cutoffDay","paymentDay","creditLimit","currentUsed"].forEach(id=>$(id).value="");
-    $("formTitle").textContent="Agregar tarjeta";$("saveCard").textContent="Guardar tarjeta";$("cancelEdit").style.display="none";
-  }
-
-  function editCard(id){
-    const c=cards.find(x=>x.id===id);if(!c)return;
-    editingId=id;
-    $("cardName").value=c.name||"";$("bankName").value=c.bank||"";
-    $("cutoffDay").value=c.cutoffDay;$("paymentDay").value=c.paymentDay;
-    $("creditLimit").value=c.creditLimit??"";$("currentUsed").value=c.currentUsed??"";
-    $("formTitle").textContent="Editar tarjeta";$("saveCard").textContent="Guardar cambios";$("cancelEdit").style.display="inline-block";
-    showView("cardsView",false);window.scrollTo({top:0,behavior:"smooth"});
-  }
-
+  function resetForm(){editingId=null;["cardName","bankName","cutoffDay","paymentDay","creditLimit","currentUsed"].forEach(id=>$(id).value="");$("formTitle").textContent="Agregar tarjeta";$("saveCard").textContent="Guardar tarjeta";$("cancelEdit").style.display="none"}
+  function editCard(id){const c=getCard(id);if(!c)return;editingId=id;$("cardName").value=c.name||"";$("bankName").value=c.bank||"";$("cutoffDay").value=c.cutoffDay;$("paymentDay").value=c.paymentDay;$("creditLimit").value=c.creditLimit??"";$("currentUsed").value=c.currentUsed??"";$("formTitle").textContent="Editar tarjeta";$("saveCard").textContent="Guardar cambios";$("cancelEdit").style.display="inline-block";showView("cardsView",false);window.scrollTo({top:0,behavior:"smooth"})}
   function deleteCard(id){
-    cards=cards.filter(c=>c.id!==id);save();if(editingId===id)resetForm();renderAll();toast("Tarjeta eliminada");
+    const related=transactions.filter(t=>t.cardId===id);if(related.length&&!confirm(`Esta tarjeta tiene ${related.length} compras registradas. Si la eliminas también se eliminarán esas compras. ¿Continuar?`))return;
+    cards=cards.filter(c=>c.id!==id);transactions=transactions.filter(t=>t.cardId!==id);saveCards();saveTx();if(editingId===id)resetForm();renderAll();toast("Tarjeta eliminada");
   }
+  $("saveCard").onclick=()=>{const name=$("cardName").value.trim(),bank=$("bankName").value.trim(),cutoffDay=Number($("cutoffDay").value),paymentDay=Number($("paymentDay").value),creditLimit=$("creditLimit").value===""?null:Number($("creditLimit").value),currentUsed=$("currentUsed").value===""?null:Number($("currentUsed").value);if(!name||!Number.isInteger(cutoffDay)||cutoffDay<1||cutoffDay>31||!Number.isInteger(paymentDay)||paymentDay<1||paymentDay>31){toast("Completa el nombre y usa días válidos del 1 al 31");return}if((creditLimit!=null&&creditLimit<0)||(currentUsed!=null&&currentUsed<0)){toast("Los montos no pueden ser negativos");return}const data={id:editingId||uid(),name,bank,cutoffDay,paymentDay,creditLimit,currentUsed};cards=editingId?cards.map(c=>c.id===editingId?data:c):[...cards,data];saveCards();resetForm();renderAll();toast("Tarjeta guardada")};
+  $("cancelEdit").onclick=resetForm;$("clearAll").onclick=()=>{if(confirm("¿Eliminar todas las tarjetas y todas las compras registradas?")){cards=[];transactions=[];saveCards();saveTx();resetForm();renderAll();toast("Datos de tarjetas eliminados")}};
 
-  $("saveCard").onclick=()=>{
-    const name=$("cardName").value.trim(),bank=$("bankName").value.trim();
-    const cutoffDay=Number($("cutoffDay").value),paymentDay=Number($("paymentDay").value);
-    const creditLimit=$("creditLimit").value===""?null:Number($("creditLimit").value);
-    const currentUsed=$("currentUsed").value===""?null:Number($("currentUsed").value);
-    if(!name||!Number.isInteger(cutoffDay)||cutoffDay<1||cutoffDay>31||!Number.isInteger(paymentDay)||paymentDay<1||paymentDay>31){
-      toast("Completa el nombre y usa días válidos del 1 al 31");return;
-    }
-    if((creditLimit!=null&&creditLimit<0)||(currentUsed!=null&&currentUsed<0)){toast("Los montos no pueden ser negativos");return}
-    const data={id:editingId||uid(),name,bank,cutoffDay,paymentDay,creditLimit,currentUsed};
-    cards=editingId?cards.map(c=>c.id===editingId?data:c):[...cards,data];
-    save();resetForm();renderAll();toast(editingId?"Cambios guardados":"Tarjeta guardada");
+  function renderPurchasePreview(){
+    const target=$("purchasePreview"),card=getCard($("purchaseCard").value),dateStr=$("recordPurchaseDate").value;
+    if(!card||!dateStr){target.classList.remove("show");target.innerHTML="";return}
+    const calc=calcCard(card,parseISO(dateStr));target.classList.add("show");target.innerHTML=`<b>Esta compra se asignaría al siguiente ciclo:</b><div class="purchase-preview-grid"><div><span>Corte</span><strong>${dateFmt.format(calc.cutoff)}</strong></div><div><span>Pago</span><strong>${dateFmt.format(calc.due)}</strong></div><div><span>Plazo</span><strong>${calc.days} días</strong></div></div>${calc.onCut?`<div class="small" style="margin-top:7px;color:var(--warn)">⚠ Compra registrada exactamente en el día de corte.</div>`:""}`;
+  }
+  $("purchaseCard").onchange=renderPurchasePreview;$("recordPurchaseDate").onchange=renderPurchasePreview;
+  $("savePurchase").onclick=()=>{
+    const card=getCard($("purchaseCard").value),date=$("recordPurchaseDate").value,amount=Number($("recordAmount").value),category=$("recordCategory").value,description=$("recordDescription").value.trim();
+    if(!card){toast("Selecciona una tarjeta");return}if(!date||!amount||amount<=0){toast("Ingresa una fecha y un monto válido");return}
+    const calc=calcCard(card,parseISO(date),amount);if(!calc.eligible&&!confirm("El monto supera el crédito disponible registrado. ¿Guardar la compra de todas formas?"))return;
+    transactions.push({id:uid(),cardId:card.id,date,amount,category,description,status:"pending",cutoffDate:localISO(calc.cutoff),dueDate:localISO(calc.due),createdAt:new Date().toISOString()});saveTx();$("recordAmount").value="";$("recordDescription").value="";renderAll();toast(`Compra guardada · pago estimado ${dateFmt.format(calc.due)}`);
   };
-  $("cancelEdit").onclick=resetForm;
-  $("clearAll").onclick=()=>{if(confirm("¿Eliminar todas las tarjetas guardadas en este dispositivo?")){cards=[];save();resetForm();renderAll();toast("Tarjetas eliminadas")}};
 
-  function renderSimulation(){
-    if(!$("purchaseDate").value)return;
-    const d=new Date($("purchaseDate").value+"T00:00:00");
-    const amount=$("purchaseAmount").value===""?null:Number($("purchaseAmount").value);
-    const arr=ranking(d,amount),best=arr.find(x=>x.eligible);
-    renderHero(best,"simulationHero",d,"simulation");renderRanking(arr,"simulationRanking");
+  function renderPurchases(){
+    const filtered=transactions.filter(t=>purchaseFilter==="all"||t.status===purchaseFilter).sort((a,b)=>(b.date||"").localeCompare(a.date||""));$("purchaseCount").textContent=`${filtered.length} registro${filtered.length===1?"":"s"}`;const list=$("purchaseList");
+    if(!filtered.length){list.innerHTML=`<div class="empty">No hay compras ${purchaseFilter==="pending"?"pendientes":purchaseFilter==="paid"?"pagadas":"registradas"}.</div>`;return}
+    list.innerHTML=filtered.map(t=>{const card=getCard(t.cardId),due=t.dueDate?parseISO(t.dueDate):null,st=t.status==="paid"?{pill:"good",label:"Pagada"}:due&&due<norm(new Date())?{pill:"bad",label:"Vencida"}:{pill:"warn",label:"Pendiente"};return `<div class="purchase-row"><div><strong>${esc(t.description||t.category||"Compra")}</strong><div class="card-sub">${esc(card?.name||"Tarjeta eliminada")} · ${dateFmt.format(parseISO(t.date))} · ${esc(t.category||"Otro")}${due?` · pago ${dateFmt.format(due)}`:""}</div></div><div><div class="money">${money(t.amount)}</div><div class="row-actions" style="margin-top:6px;justify-content:flex-end"><span class="pill ${st.pill}">${st.label}</span>${t.status!=="paid"?`<button class="icon-btn" data-paytx="${t.id}">Pagar</button>`:`<button class="icon-btn" data-unpaytx="${t.id}">Reabrir</button>`}<button class="icon-btn" data-deltx="${t.id}">×</button></div></div></div>`}).join("");
+    document.querySelectorAll("[data-paytx]").forEach(b=>b.onclick=()=>setTxStatus(b.dataset.paytx,"paid"));document.querySelectorAll("[data-unpaytx]").forEach(b=>b.onclick=()=>setTxStatus(b.dataset.unpaytx,"pending"));document.querySelectorAll("[data-deltx]").forEach(b=>b.onclick=()=>deleteTx(b.dataset.deltx));
   }
-  $("calculateBtn").onclick=renderSimulation;
-  $("purchaseDate").onchange=renderSimulation;
-  $("purchaseAmount").oninput=renderSimulation;
+  function setTxStatus(id,status){transactions=transactions.map(t=>t.id===id?{...t,status,paidAt:status==="paid"?localISO(new Date()):null}:t);saveTx();renderAll();toast(status==="paid"?"Compra marcada como pagada":"Compra reabierta")}
+  function deleteTx(id){if(!confirm("¿Eliminar esta compra del registro?"))return;transactions=transactions.filter(t=>t.id!==id);saveTx();renderAll();toast("Compra eliminada")}
+  document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{purchaseFilter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x.dataset.filter===purchaseFilter));renderPurchases()});
+
+  function renderSimulation(){if(!$("purchaseDate").value)return;const d=parseISO($("purchaseDate").value),amount=$("purchaseAmount").value===""?null:Number($("purchaseAmount").value),arr=ranking(d,amount),best=arr.find(x=>x.eligible);renderHero(best,"simulationHero",d,"simulation");renderRanking(arr,"simulationRanking")}
+  $("calculateBtn").onclick=renderSimulation;$("purchaseDate").onchange=renderSimulation;$("purchaseAmount").oninput=renderSimulation;
 
   function renderCalendar(){
-    const v=$("calendarMonth").value;if(!v)return;
-    const [y,m1]=v.split("-").map(Number),m=m1-1;
-    const first=new Date(y,m,1),offset=(first.getDay()+6)%7;
-    const labels=["L","M","X","J","V","S","D"];
-    let html=labels.map(x=>`<div class="dow">${x}</div>`).join("");
-    for(let i=0;i<offset;i++)html+=`<div class="day blank"></div>`;
-    const today=norm(new Date());
-    for(let day=1;day<=dim(y,m);day++){
-      const d=new Date(y,m,day),arr=ranking(d),best=arr.find(x=>x.eligible);
-      const isToday=d.getTime()===today.getTime();
-      const isSelected=selectedCalendarDate&&d.getTime()===norm(selectedCalendarDate).getTime();
-      html+=`<div class="day ${isToday?"today":""} ${isSelected?"selected":""}" data-date="${localISO(d)}">
-        <div class="day-num">${day}</div>
-        ${best?`<div class="day-card">${esc(best.name)}</div><div class="day-days">${best.days} días</div>`:`<div class="day-card">—</div>`}
-      </div>`;
-    }
-    $("calendarGrid").innerHTML=html;
-    document.querySelectorAll(".day[data-date]").forEach(el=>el.onclick=()=>{
-      selectedCalendarDate=new Date(el.dataset.date+"T00:00:00");renderCalendar();renderCalendarDetail();
-    });
-    if(!selectedCalendarDate||selectedCalendarDate.getFullYear()!==y||selectedCalendarDate.getMonth()!==m){
-      selectedCalendarDate=new Date(y,m,1);
-    }
-    renderCalendarDetail();
+    const v=$("calendarMonth").value;if(!v)return;const[y,m1]=v.split("-").map(Number),m=m1-1,first=new Date(y,m,1),offset=(first.getDay()+6)%7,labels=["L","M","X","J","V","S","D"];let html=labels.map(x=>`<div class="dow">${x}</div>`).join("");for(let i=0;i<offset;i++)html+=`<div class="day blank"></div>`;const today=norm(new Date());for(let day=1;day<=dim(y,m);day++){const d=new Date(y,m,day),arr=ranking(d),best=arr.find(x=>x.eligible),isToday=d.getTime()===today.getTime(),isSelected=selectedCalendarDate&&d.getTime()===norm(selectedCalendarDate).getTime();html+=`<div class="day ${isToday?"today":""} ${isSelected?"selected":""}" data-date="${localISO(d)}"><div class="day-num">${day}</div>${best?`<div class="day-card">${esc(best.name)}</div><div class="day-days">${best.days} días</div>`:`<div class="day-card">—</div>`}</div>`}$("calendarGrid").innerHTML=html;document.querySelectorAll(".day[data-date]").forEach(el=>el.onclick=()=>{selectedCalendarDate=parseISO(el.dataset.date);renderCalendar();renderCalendarDetail()});if(!selectedCalendarDate||selectedCalendarDate.getFullYear()!==y||selectedCalendarDate.getMonth()!==m)selectedCalendarDate=new Date(y,m,1);renderCalendarDetail();
   }
+  function renderCalendarDetail(){const d=selectedCalendarDate;if(!d)return;const arr=ranking(d),best=arr.find(x=>x.eligible),target=$("calendarDetail");if(!best){target.innerHTML=`<div class="empty">Registra tarjetas para obtener recomendaciones.</div>`;return}target.innerHTML=`<div class="section-head"><h2>${esc(dateLongFmt.format(d))}</h2><span class="pill good">${best.days} días</span></div><div class="compare-row best"><div><strong>${esc(best.name)}</strong><div class="compare-meta">Corte ${dateFmt.format(best.cutoff)} · pago ${dateFmt.format(best.due)}</div></div><div class="pill good">Mejor opción</div></div>`}
+  $("calendarMonth").onchange=()=>{selectedCalendarDate=null;renderCalendar()};$("goTodayMonth").onclick=()=>{$("calendarMonth").value=monthISO(new Date());selectedCalendarDate=new Date();renderCalendar()};
 
-  function renderCalendarDetail(){
-    const d=selectedCalendarDate;if(!d)return;
-    const arr=ranking(d),best=arr.find(x=>x.eligible);
-    const target=$("calendarDetail");
-    if(!best){target.innerHTML=`<div class="empty">Registra tarjetas para obtener recomendaciones.</div>`;return}
-    target.innerHTML=`<div class="section-head"><h2>${esc(dateLongFmt.format(d))}</h2><span class="pill good">${best.days} días</span></div>
-      <div class="compare-row best"><div><strong>${esc(best.name)}</strong><div class="compare-meta">Corte ${dateFmt.format(best.cutoff)} · pago ${dateFmt.format(best.due)}</div></div><div class="pill good">Mejor opción</div></div>`;
-  }
+  $("exportBtn").onclick=()=>{const backup={app:"Optimizador de Tarjetas",version:"1.3",exportedAt:new Date().toISOString(),cards,transactions,settings};const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`optimizador_tarjetas_respaldo_${localISO(new Date())}.json`;a.click();URL.revokeObjectURL(url)};
+  $("importBtn").onclick=()=>$("importFile").click();$("importFile").onchange=async()=>{const file=$("importFile").files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(Array.isArray(data)){cards=data;transactions=[];settings={liquidFunds:null}}else{if(!Array.isArray(data.cards))throw new Error();cards=data.cards;transactions=Array.isArray(data.transactions)?data.transactions.map(normalizeTransaction):[];settings={liquidFunds:null,...(data.settings||{})}}saveCards();saveTx();saveSettings();renderAll();toast("Respaldo importado correctamente")}catch{toast("No se pudo importar el respaldo")}$("importFile").value=""};
 
-  $("calendarMonth").onchange=()=>{selectedCalendarDate=null;renderCalendar()};
-  $("goTodayMonth").onclick=()=>{$("calendarMonth").value=monthISO(new Date());selectedCalendarDate=new Date();renderCalendar()};
+  function showView(id,scroll=true){document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));if(id==="calendarView")renderCalendar();if(id==="simulateView")renderSimulation();if(id==="purchasesView")renderPurchases();if(scroll)window.scrollTo({top:0,behavior:"smooth"})}
+  document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));function bindGoButtons(){document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showView(b.dataset.go))}bindGoButtons();
 
-  $("exportBtn").onclick=()=>{
-    const blob=new Blob([JSON.stringify(cards,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
-    a.href=url;a.download="mis_tarjetas_credito.json";a.click();URL.revokeObjectURL(url);
-  };
-  $("importBtn").onclick=()=>$("importFile").click();
-  $("importFile").onchange=async()=>{
-    const file=$("importFile").files[0];if(!file)return;
-    try{
-      const data=JSON.parse(await file.text());
-      if(!Array.isArray(data))throw new Error();
-      cards=data.map(c=>({
-        id:c.id||uid(),name:String(c.name||"Tarjeta"),bank:String(c.bank||""),
-        cutoffDay:Number(c.cutoffDay),paymentDay:Number(c.paymentDay),
-        creditLimit:c.creditLimit==null?null:Number(c.creditLimit),
-        currentUsed:c.currentUsed==null?null:Number(c.currentUsed)
-      })).filter(c=>c.cutoffDay>=1&&c.cutoffDay<=31&&c.paymentDay>=1&&c.paymentDay<=31);
-      save();renderAll();toast("Datos importados correctamente");
-    }catch{toast("No se pudo importar el archivo")}
-    $("importFile").value="";
-  };
+  window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("installBtn").style.display="inline-block"});
+  function isStandalone(){return window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true}
+  $("installBtn").onclick=async()=>{if(isStandalone()){toast("La aplicación ya está instalada");return}if(deferredPrompt){deferredPrompt.prompt();const choice=await deferredPrompt.userChoice;if(choice&&choice.outcome==="accepted")toast("Instalando aplicación…");deferredPrompt=null;return}const ua=navigator.userAgent.toLowerCase(),isiOS=/iphone|ipad|ipod/.test(ua);if(isiOS)alert("Para instalar esta app en iPhone/iPad:\n\n1. Abre el menú Compartir de Safari.\n2. Selecciona ‘Agregar a pantalla de inicio’.\n3. Confirma con ‘Agregar’. ");else alert("Para instalar esta app en Android:\n\n1. Abre el menú ⋮ de Chrome.\n2. Busca ‘Instalar aplicación’ o ‘Agregar a pantalla principal’.\n3. Confirma la instalación.")};window.addEventListener("appinstalled",()=>{deferredPrompt=null;toast("Aplicación instalada correctamente")});if(isStandalone())$("installBtn").textContent="App instalada";
+  if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));
 
-  function showView(id,scroll=true){
-    document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));
-    document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));
-    if(id==="calendarView")renderCalendar();
-    if(id==="simulateView")renderSimulation();
-    if(scroll)window.scrollTo({top:0,behavior:"smooth"});
-  }
-  document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));
-  function bindGoButtons(){document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showView(b.dataset.go))}
-  bindGoButtons();
-
-  window.addEventListener("beforeinstallprompt",e=>{
-    e.preventDefault();
-    deferredPrompt=e;
-    $("installBtn").style.display="inline-block";
-  });
-
-  function isStandalone(){
-    return window.matchMedia("(display-mode: standalone)").matches ||
-           window.navigator.standalone === true;
-  }
-
-  $("installBtn").onclick=async()=>{
-    if(isStandalone()){
-      toast("La aplicación ya está abierta en modo instalado");
-      return;
-    }
-
-    if(deferredPrompt){
-      deferredPrompt.prompt();
-      const choice = await deferredPrompt.userChoice;
-      if(choice && choice.outcome === "accepted"){
-        toast("Instalando aplicación…");
-      }
-      deferredPrompt=null;
-      return;
-    }
-
-    const ua=navigator.userAgent.toLowerCase();
-    const isiOS=/iphone|ipad|ipod/.test(ua);
-
-    if(isiOS){
-      alert("Para instalar esta app en iPhone/iPad:\n\n1. Abre el menú Compartir de Safari.\n2. Selecciona “Agregar a pantalla de inicio”.\n3. Confirma con “Agregar”.");
-    }else{
-      alert("Para instalar esta app en Android:\n\n1. Abre el menú ⋮ de Chrome.\n2. Busca “Instalar aplicación” o “Agregar a pantalla principal”.\n3. Confirma la instalación.\n\nSi esa opción no aparece, recarga esta página una vez y vuelve a intentarlo.");
-    }
-  };
-
-  window.addEventListener("appinstalled",()=>{
-    deferredPrompt=null;
-    toast("Aplicación instalada correctamente");
-  });
-
-  if(isStandalone()){
-    $("installBtn").textContent="App instalada";
-  }
-
-  if("serviceWorker" in navigator){
-    window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));
-  }
-
-  $("purchaseDate").value=localISO(new Date());
-  $("calendarMonth").value=monthISO(new Date());
-  selectedCalendarDate=new Date();
-
-  function renderAll(){renderHome();renderCards();renderSimulation();renderCalendar();bindGoButtons()}
+  $("purchaseDate").value=localISO(new Date());$("recordPurchaseDate").value=localISO(new Date());$("calendarMonth").value=monthISO(new Date());selectedCalendarDate=new Date();
+  function renderAll(){renderHome();renderCards();renderPurchases();renderSimulation();renderCalendar();bindGoButtons();renderPurchasePreview()}
   renderAll();
 })();
 </script>
