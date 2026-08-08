@@ -62,7 +62,7 @@ button:focus-visible,input:focus-visible{outline:3px solid rgba(40,103,166,.18);
 .brand-text strong{display:block;font-size:14px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .brand-text span{font-size:10px;color:var(--muted)}
 .install-btn{
-  display:none;border:0;border-radius:11px;background:var(--brand);color:#fff;
+  display:inline-block;border:0;border-radius:11px;background:var(--brand);color:#fff;
   padding:9px 11px;font-size:12px;font-weight:800;white-space:nowrap
 }
 main{padding:16px}
@@ -228,10 +228,10 @@ input:focus{border-color:#8db2d9;box-shadow:0 0 0 3px rgba(40,103,166,.08)}
     <div class="brand-mark">◈</div>
     <div class="brand-text">
       <strong>Optimizador de Tarjetas</strong>
-      <span>Financiamiento de corto plazo sin intereses</span>
+      <span>Financiamiento de corto plazo sin intereses · v1.1.1</span>
     </div>
   </div>
-  <button id="installBtn" class="install-btn">Instalar</button>
+  <button id="installBtn" class="install-btn">Instalar app</button>
 </header>
 
 <main>
@@ -618,13 +618,50 @@ input:focus{border-color:#8db2d9;box-shadow:0 0 0 3px rgba(40,103,166,.08)}
   bindGoButtons();
 
   window.addEventListener("beforeinstallprompt",e=>{
-    e.preventDefault();deferredPrompt=e;$("installBtn").style.display="inline-block";
+    e.preventDefault();
+    deferredPrompt=e;
+    $("installBtn").style.display="inline-block";
   });
+
+  function isStandalone(){
+    return window.matchMedia("(display-mode: standalone)").matches ||
+           window.navigator.standalone === true;
+  }
+
   $("installBtn").onclick=async()=>{
-    if(!deferredPrompt)return;
-    deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$("installBtn").style.display="none";
+    if(isStandalone()){
+      toast("La aplicación ya está abierta en modo instalado");
+      return;
+    }
+
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      if(choice && choice.outcome === "accepted"){
+        toast("Instalando aplicación…");
+      }
+      deferredPrompt=null;
+      return;
+    }
+
+    const ua=navigator.userAgent.toLowerCase();
+    const isiOS=/iphone|ipad|ipod/.test(ua);
+
+    if(isiOS){
+      alert("Para instalar esta app en iPhone/iPad:\n\n1. Abre el menú Compartir de Safari.\n2. Selecciona “Agregar a pantalla de inicio”.\n3. Confirma con “Agregar”.");
+    }else{
+      alert("Para instalar esta app en Android:\n\n1. Abre el menú ⋮ de Chrome.\n2. Busca “Instalar aplicación” o “Agregar a pantalla principal”.\n3. Confirma la instalación.\n\nSi esa opción no aparece, recarga esta página una vez y vuelve a intentarlo.");
+    }
   };
-  window.addEventListener("appinstalled",()=>{$("installBtn").style.display="none";toast("Aplicación instalada")});
+
+  window.addEventListener("appinstalled",()=>{
+    deferredPrompt=null;
+    toast("Aplicación instalada correctamente");
+  });
+
+  if(isStandalone()){
+    $("installBtn").textContent="App instalada";
+  }
 
   if("serviceWorker" in navigator){
     window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));
