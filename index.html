@@ -1,695 +1,641 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Optimizador de Tarjetas de Crédito</title>
-  <meta name="theme-color" content="#1f4f8a" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Mis Tarjetas" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-  <style>
-    :root{
-      --bg:#f6f7f9;
-      --card:#ffffff;
-      --text:#172033;
-      --muted:#667085;
-      --line:#e6e9ef;
-      --accent:#1f4f8a;
-      --accent2:#eef4fb;
-      --good:#177245;
-      --warn:#8a5a00;
-      --danger:#a61b1b;
-      --shadow:0 10px 30px rgba(25,40,65,.07);
-      --radius:18px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      color:var(--text);
-      background:linear-gradient(180deg,#f9fafb 0%,var(--bg) 100%);
-    }
-    .wrap{max-width:1180px;margin:0 auto;padding:28px 18px 56px}
-    header{
-      display:flex;justify-content:space-between;gap:18px;align-items:flex-start;
-      margin-bottom:20px
-    }
-    h1{font-size:clamp(26px,4vw,40px);line-height:1.05;margin:0 0 10px}
-    .subtitle{color:var(--muted);max-width:760px;line-height:1.55;margin:0}
-    .install-btn{display:none;margin-top:10px;width:100%;background:var(--accent);color:#fff;border-radius:12px;padding:10px 12px;font-weight:750}
-    .badge-wrap{display:flex;flex-direction:column;align-items:flex-end}
-    .badge{
-      background:var(--accent2);color:var(--accent);border:1px solid #d7e5f5;
-      padding:8px 11px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap
-    }
-    .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
-    .panel{
-      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-      box-shadow:var(--shadow);padding:20px
-    }
-    .panel h2{font-size:18px;margin:0 0 14px}
-    .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    .field label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin:0 0 6px}
-    input,select,button{
-      font:inherit
-    }
-    input,select{
-      width:100%;border:1px solid #d9dee7;border-radius:12px;padding:11px 12px;background:#fff;color:var(--text);
-      outline:none
-    }
-    input:focus,select:focus{border-color:#8eb1d9;box-shadow:0 0 0 3px rgba(31,79,138,.09)}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-    button{
-      border:0;border-radius:12px;padding:10px 14px;font-weight:750;cursor:pointer
-    }
-    .primary{background:var(--accent);color:#fff}
-    .secondary{background:#eef1f5;color:#28364a}
-    .ghost{background:#fff;border:1px solid var(--line);color:#344054}
-    .danger{background:#fff1f1;color:var(--danger);border:1px solid #f1caca}
-    .note{
-      margin-top:14px;padding:12px 14px;border-radius:12px;background:#fff8e8;color:#6b4a00;
-      border:1px solid #f0dfb4;font-size:13px;line-height:1.45
-    }
-    .cards{display:grid;gap:10px;margin-top:14px}
-    .card-row{
-      display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;
-      border:1px solid var(--line);border-radius:14px;padding:13px
-    }
-    .card-row strong{display:block;margin-bottom:3px}
-    .small{font-size:12px;color:var(--muted);line-height:1.45}
-    .row-actions{display:flex;gap:6px}
-    .row-actions button{padding:7px 9px;font-size:12px}
-    .hero{
-      background:linear-gradient(135deg,#173d6a,#245c9b);
-      color:#fff;border-radius:18px;padding:20px;margin-bottom:14px
-    }
-    .hero .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.75;font-weight:800}
-    .hero h3{font-size:28px;margin:6px 0 8px}
-    .hero .days{font-size:46px;font-weight:850;line-height:1;margin:8px 0}
-    .hero .days span{font-size:18px;font-weight:650;opacity:.85}
-    .hero .meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:15px}
-    .hero .meta div{background:rgba(255,255,255,.10);padding:10px;border-radius:12px}
-    .hero .meta b{display:block;font-size:12px;opacity:.8;margin-bottom:2px}
-    .hero .meta span{font-size:14px}
-    .sim-fields{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin-bottom:14px}
-    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
-    table{width:100%;border-collapse:collapse;min-width:760px}
-    th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;vertical-align:top}
-    th{background:#f8fafc;color:#475467;font-size:12px}
-    tr:last-child td{border-bottom:0}
-    tr.best{background:#f1faf5}
-    .pill{
-      display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:800
-    }
-    .pill.good{background:#eaf8f0;color:var(--good)}
-    .pill.warn{background:#fff5d9;color:var(--warn)}
-    .pill.bad{background:#ffeded;color:var(--danger)}
-    .section-title{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:20px 0 10px}
-    .section-title h2{margin:0;font-size:18px}
-    .empty{
-      text-align:center;padding:28px 16px;color:var(--muted);border:1px dashed #d8dde6;border-radius:14px
-    }
-    .footer-note{
-      margin-top:18px;color:var(--muted);font-size:12px;line-height:1.55
-    }
-
-    .calendar-panel{margin-top:18px}
-    .calendar-head{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:12px}
-    .calendar-head .field{max-width:220px;width:100%}
-    .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
-    .calendar-dow{text-align:center;font-size:11px;color:var(--muted);font-weight:800;padding:4px}
-    .calendar-day{min-height:78px;border:1px solid var(--line);border-radius:12px;padding:7px;background:#fff}
-    .calendar-day.empty-day{background:transparent;border-color:transparent}
-    .calendar-num{font-size:12px;font-weight:850}
-    .calendar-card{font-size:10px;font-weight:800;color:var(--accent);margin-top:9px;line-height:1.15;overflow:hidden;text-overflow:ellipsis}
-    .calendar-days{font-size:10px;color:var(--good);margin-top:3px;font-weight:750}
-
-    @media(max-width:900px){
-      .grid{grid-template-columns:1fr}
-    }
-    @media(max-width:640px){
-      header{display:block}.badge{display:inline-block;margin-top:12px}
-      .fields,.sim-fields{grid-template-columns:1fr}
-      .calendar-day{min-height:64px;padding:5px}
-      .calendar-card,.calendar-days{font-size:9px}
-      .badge-wrap{align-items:flex-start}
-      .hero .meta{grid-template-columns:1fr}
-      .row-actions{flex-direction:column}
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#173F70">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mis Tarjetas">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Optimizador de Tarjetas</title>
+<style>
+:root{
+  --bg:#f4f6f9;
+  --surface:#ffffff;
+  --text:#162033;
+  --muted:#697386;
+  --line:#e3e7ee;
+  --brand:#173f70;
+  --brand2:#2867a6;
+  --brand-soft:#edf4fb;
+  --good:#177245;
+  --good-soft:#eaf8f0;
+  --warn:#8a5a00;
+  --warn-soft:#fff5d9;
+  --danger:#a61b1b;
+  --danger-soft:#ffeded;
+  --shadow:0 10px 28px rgba(25,45,75,.08);
+  --r:20px;
+  --nav-h:78px;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--text);
+  background:linear-gradient(180deg,#f8fafc 0%,var(--bg) 46%);
+  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
+}
+button,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid rgba(40,103,166,.18);outline-offset:2px}
+.app-shell{max-width:1080px;margin:0 auto}
+.appbar{
+  position:sticky;top:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:calc(12px + env(safe-area-inset-top)) 16px 12px;
+  background:rgba(248,250,252,.92);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(227,231,238,.8);
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-mark{
+  width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));color:white;
+  box-shadow:0 6px 16px rgba(23,63,112,.18);font-weight:900;font-size:19px
+}
+.brand-text{min-width:0}
+.brand-text strong{display:block;font-size:14px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-text span{font-size:10px;color:var(--muted)}
+.install-btn{
+  display:none;border:0;border-radius:11px;background:var(--brand);color:#fff;
+  padding:9px 11px;font-size:12px;font-weight:800;white-space:nowrap
+}
+main{padding:16px}
+.view{display:none;animation:fade .16s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:none}}
+.page-title{margin:2px 0 14px}
+.page-title h1{font-size:24px;letter-spacing:-.02em;margin:0 0 5px}
+.page-title p{font-size:13px;color:var(--muted);margin:0;line-height:1.45}
+.card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:16px;
+  box-shadow:var(--shadow);
+  margin-bottom:14px;
+}
+.hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#153a67 0%,#255e98 68%,#2e74b5 100%);
+  color:#fff;border:0;padding:19px;
+}
+.hero:after{
+  content:"";position:absolute;width:170px;height:170px;border-radius:50%;
+  background:rgba(255,255,255,.07);right:-60px;top:-65px
+}
+.hero-top{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:850;opacity:.73}
+.hero-date{font-size:11px;opacity:.8;text-align:right}
+.hero h2{position:relative;z-index:1;font-size:27px;line-height:1.1;margin:9px 0 4px;max-width:78%}
+.hero-bank{position:relative;z-index:1;font-size:12px;opacity:.78;min-height:17px}
+.days{position:relative;z-index:1;font-size:45px;font-weight:900;line-height:1;margin:16px 0 4px;letter-spacing:-.04em}
+.days span{font-size:15px;font-weight:700;letter-spacing:0;opacity:.82}
+.hero-message{position:relative;z-index:1;font-size:12px;line-height:1.45;opacity:.86;margin-top:9px}
+.hero-meta{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:15px}
+.hero-meta>div{padding:10px 11px;border-radius:13px;background:rgba(255,255,255,.11)}
+.hero-meta b{font-size:10px;display:block;opacity:.72;margin-bottom:3px}
+.hero-meta span{font-size:13px;font-weight:700}
+.no-cards-hero{text-align:left}
+.no-cards-hero h2{max-width:100%}
+.cta{
+  position:relative;z-index:2;margin-top:14px;border:0;background:white;color:var(--brand);
+  border-radius:12px;padding:11px 14px;font-size:12px;font-weight:850
+}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+.section-head h2{font-size:17px;margin:0}
+.section-head .small{font-size:11px;color:var(--muted)}
+.compare{display:grid;gap:8px}
+.compare-row{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;
+  padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff
+}
+.compare-row.best{background:#f1faf5;border-color:#cde8d7}
+.compare-row strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.compare-meta{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.35}
+.pill{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:850;white-space:nowrap}
+.pill.good{background:var(--good-soft);color:var(--good)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--danger-soft);color:var(--danger)}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.quick-btn{
+  text-align:left;border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px;color:var(--text)
+}
+.quick-btn b{display:block;font-size:12px;margin-bottom:3px}.quick-btn span{font-size:10px;color:var(--muted)}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:11px}
+.stat b{display:block;font-size:20px;line-height:1.1}.stat span{font-size:9px;color:var(--muted);line-height:1.3;display:block;margin-top:3px}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:6px}
+input{
+  width:100%;border:1px solid #d7dde7;border-radius:12px;background:#fff;color:var(--text);
+  padding:12px;min-height:44px;outline:none
+}
+input:focus{border-color:#8db2d9;box-shadow:0 0 0 3px rgba(40,103,166,.08)}
+.form-grid{display:grid;grid-template-columns:1fr;gap:0}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:12px;padding:11px 14px;font-weight:850;font-size:12px}
+.primary{background:var(--brand);color:#fff}
+.secondary{background:#eef1f5;color:#344054}
+.ghost{background:#fff;border:1px solid var(--line);color:#344054}
+.danger{background:#fff0f0;color:var(--danger);border:1px solid #efcccc}
+.full{width:100%}
+.note{
+  margin-top:12px;padding:12px;border-radius:13px;background:#fff8e8;border:1px solid #efdeb3;
+  color:#6e4c00;font-size:11px;line-height:1.45
+}
+.card-list{display:grid;gap:9px}
+.credit-card{
+  border:1px solid var(--line);border-radius:16px;padding:13px;background:#fff;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center
+}
+.credit-card strong{font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-sub{font-size:10px;color:var(--muted);line-height:1.4;margin-top:3px}
+.row-actions{display:flex;gap:5px}
+.icon-btn{border:0;background:#eef1f5;color:#344054;border-radius:10px;padding:8px;font-size:10px;font-weight:800}
+.empty{text-align:center;padding:24px 12px;color:var(--muted);font-size:12px;border:1px dashed #d7dde7;border-radius:14px}
+.sim-summary{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.sim-summary .field{margin:0}
+.calendar-toolbar{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;margin-bottom:12px}
+.calendar-toolbar .field{margin:0}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.dow{text-align:center;font-size:9px;color:var(--muted);font-weight:850;padding:3px}
+.day{
+  min-height:63px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:5px;cursor:pointer
+}
+.day.blank{background:transparent;border-color:transparent;cursor:default}
+.day.today{border-color:#80a9d2;box-shadow:inset 0 0 0 1px #80a9d2}
+.day.selected{background:var(--brand-soft);border-color:#86acd3}
+.day-num{font-size:10px;font-weight:900}
+.day-card{font-size:8px;line-height:1.15;font-weight:850;color:var(--brand);margin-top:7px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.day-days{font-size:8px;color:var(--good);font-weight:800;margin-top:2px}
+.calendar-detail{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.backup-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.privacy{
+  display:flex;gap:9px;align-items:flex-start;background:#f8fafc;border:1px solid var(--line);
+  border-radius:14px;padding:11px;margin-top:12px
+}
+.privacy b{font-size:11px;display:block;margin-bottom:2px}.privacy span{font-size:10px;color:var(--muted);line-height:1.4}
+.footer-note{font-size:10px;color:var(--muted);line-height:1.5;padding:0 2px 10px}
+.bottom-nav{
+  position:fixed;z-index:30;left:0;right:0;bottom:0;
+  display:grid;grid-template-columns:repeat(4,1fr);
+  padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.96);backdrop-filter:blur(16px);
+  border-top:1px solid var(--line)
+}
+.nav-btn{
+  border:0;background:transparent;color:#7a8495;border-radius:12px;padding:5px 3px 4px;
+  font-size:9px;font-weight:800
+}
+.nav-btn .ico{display:block;font-size:20px;line-height:1;margin-bottom:4px}
+.nav-btn.active{color:var(--brand);background:var(--brand-soft)}
+.version{font-size:9px;color:#98a2b3;text-align:center;margin-top:5px}
+.toast{
+  position:fixed;z-index:50;left:50%;bottom:calc(var(--nav-h) + 16px + env(safe-area-inset-bottom));
+  transform:translate(-50%,20px);opacity:0;pointer-events:none;
+  max-width:calc(100vw - 30px);background:#172033;color:#fff;padding:10px 13px;border-radius:12px;
+  font-size:11px;box-shadow:0 12px 30px rgba(0,0,0,.18);transition:.2s
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:700px){
+  main{padding:22px}
+  .page-title h1{font-size:28px}
+  .form-grid{grid-template-columns:1fr 1fr;gap:0 12px}
+  .home-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;align-items:start}
+  .home-grid>.card,.home-grid>.hero{margin-bottom:0}
+  .hero{min-height:322px;display:flex;flex-direction:column}
+  .hero-meta{margin-top:auto}
+  .day{min-height:82px;padding:7px}.day-card,.day-days{font-size:9px}
+  .bottom-nav{left:50%;right:auto;transform:translateX(-50%);width:min(620px,calc(100% - 24px));border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;box-shadow:0 -8px 24px rgba(25,45,75,.08)}
+}
+@media(min-width:980px){
+  .appbar{border-radius:0 0 16px 16px}
+  main{padding:26px 24px}
+  .calendar-grid{gap:7px}
+}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>Optimizador de Tarjetas</h1>
-        <p class="subtitle">
-          Registra tus tarjetas, simula una compra y compara cuántos días tendrías hasta la fecha límite de pago.
-          La lógica está diseñada para favorecer el uso del período de gracia sin pagar intereses.
-        </p>
-      </div>
-      <div class="badge-wrap">
-        <div class="badge">Datos guardados solo en este navegador</div>
-        <button id="installApp" class="install-btn">Instalar aplicación</button>
-      </div>
-    </header>
-
-    <div class="grid">
-      <section class="panel">
-        <h2>Registrar tarjeta</h2>
-        <div class="fields">
-          <div class="field">
-            <label>Nombre de la tarjeta</label>
-            <input id="cardName" placeholder="Ej. BAC Amex Cashback" />
-          </div>
-          <div class="field">
-            <label>Banco (opcional)</label>
-            <input id="bankName" placeholder="Ej. BAC" />
-          </div>
-          <div class="field">
-            <label>Día de corte</label>
-            <input id="cutoffDay" type="number" min="1" max="31" placeholder="Ej. 5" />
-          </div>
-          <div class="field">
-            <label>Día límite de pago</label>
-            <input id="paymentDay" type="number" min="1" max="31" placeholder="Ej. 25" />
-          </div>
-          <div class="field">
-            <label>Límite de crédito (opcional)</label>
-            <input id="creditLimit" type="number" min="0" step="0.01" placeholder="Ej. 3000" />
-          </div>
-          <div class="field">
-            <label>Saldo utilizado actual (opcional)</label>
-            <input id="currentUsed" type="number" min="0" step="0.01" placeholder="Ej. 450" />
-          </div>
-        </div>
-        <div class="actions">
-          <button class="primary" id="saveCard">Guardar tarjeta</button>
-          <button class="secondary" id="cancelEdit" style="display:none">Cancelar edición</button>
-          <button class="ghost" id="exportBtn">Exportar datos</button>
-          <button class="ghost" id="importBtn">Importar datos</button>
-          <input id="importFile" type="file" accept="application/json" style="display:none" />
-        </div>
-
-        <div class="note">
-          <strong>Supuesto conservador:</strong> si compras exactamente el día de corte, la herramienta asume que la compra
-          podría entrar en ese mismo estado de cuenta. Para maximizar el plazo, suele ser más seguro comprar a partir del día siguiente al corte.
-        </div>
-
-        <div class="section-title">
-          <h2>Mis tarjetas</h2>
-          <button class="danger" id="clearAll" style="display:none">Eliminar todas</button>
-        </div>
-        <div id="cardsList" class="cards"></div>
-      </section>
-
-      <section class="panel">
-        <h2>Simular compra</h2>
-        <div class="sim-fields">
-          <div class="field">
-            <label>Fecha de compra</label>
-            <input id="purchaseDate" type="date" />
-          </div>
-          <div class="field">
-            <label>Monto de compra (opcional)</label>
-            <input id="purchaseAmount" type="number" min="0" step="0.01" placeholder="Ej. 250" />
-          </div>
-          <button class="primary" id="calculateBtn">Calcular</button>
-        </div>
-
-        <div id="recommendation"></div>
-
-        <div class="section-title">
-          <h2>Comparación</h2>
-          <span class="small">Ordenada por mayor plazo estimado</span>
-        </div>
-        <div id="results"></div>
-      </section>
+<div class="app-shell">
+<header class="appbar">
+  <div class="brand">
+    <div class="brand-mark">◈</div>
+    <div class="brand-text">
+      <strong>Optimizador de Tarjetas</strong>
+      <span>Financiamiento de corto plazo sin intereses</span>
     </div>
-
-    <section class="panel calendar-panel">
-      <div class="calendar-head">
-        <div>
-          <h2 style="margin:0 0 6px">Calendario de mejor tarjeta</h2>
-          <div class="small">Muestra qué tarjeta maximiza el plazo estimado para cada día del mes.</div>
-        </div>
-        <div class="field">
-          <label>Mes</label>
-          <input id="calendarMonth" type="month" />
-        </div>
-      </div>
-      <div id="calendarGrid" class="calendar-grid"></div>
-    </section>
-
-    <p class="footer-note">
-      Esta herramienta no sustituye las condiciones contractuales de cada banco. El cálculo supone que conservas el período de gracia,
-      que pagas íntegramente el monto requerido para no generar intereses antes de la fecha límite y que la compra se contabiliza de forma normal.
-      Adelantos de efectivo, extrafinanciamientos, cuotas, transferencias de saldo y tarjetas con saldo revolvente pueden seguir reglas distintas.
-    </p>
   </div>
+  <button id="installBtn" class="install-btn">Instalar</button>
+</header>
+
+<main>
+<section id="homeView" class="view active">
+  <div class="page-title">
+    <h1>¿Qué tarjeta uso hoy?</h1>
+    <p>Compara automáticamente tus ciclos de corte y pago para maximizar el período de gracia.</p>
+  </div>
+
+  <div class="home-grid">
+    <div id="todayHero"></div>
+    <div class="card">
+      <div class="section-head">
+        <h2>Ranking de hoy</h2>
+        <span id="todayLabel" class="small"></span>
+      </div>
+      <div id="todayRanking" class="compare"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-head"><h2>Accesos rápidos</h2></div>
+    <div class="quick-grid">
+      <button class="quick-btn" data-go="simulateView"><b>Simular una compra</b><span>Elige fecha y monto</span></button>
+      <button class="quick-btn" data-go="calendarView"><b>Ver calendario</b><span>Mejor tarjeta cada día</span></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-head"><h2>Resumen</h2></div>
+    <div class="stat-grid">
+      <div class="stat"><b id="statCards">0</b><span>Tarjetas</span></div>
+      <div class="stat"><b id="statDays">—</b><span>Máx. días hoy</span></div>
+      <div class="stat"><b id="statAvailable">—</b><span>Crédito disponible</span></div>
+    </div>
+  </div>
+  <div class="footer-note">El período estimado depende de cuándo el emisor contabilice la transacción. En la fecha exacta de corte se usa un supuesto conservador.</div>
+</section>
+
+<section id="cardsView" class="view">
+  <div class="page-title">
+    <h1>Mis tarjetas</h1>
+    <p>Configura las fechas que determinan el ciclo de facturación de cada tarjeta.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-head"><h2 id="formTitle">Agregar tarjeta</h2></div>
+    <div class="form-grid">
+      <div class="field"><label>Nombre de la tarjeta</label><input id="cardName" placeholder="Ej. BAC Amex Cashback"></div>
+      <div class="field"><label>Banco (opcional)</label><input id="bankName" placeholder="Ej. BAC"></div>
+      <div class="field"><label>Día de corte</label><input id="cutoffDay" type="number" min="1" max="31" placeholder="Ej. 5"></div>
+      <div class="field"><label>Día límite de pago</label><input id="paymentDay" type="number" min="1" max="31" placeholder="Ej. 25"></div>
+      <div class="field"><label>Límite de crédito (opcional)</label><input id="creditLimit" type="number" min="0" step="0.01" placeholder="Ej. 3000"></div>
+      <div class="field"><label>Saldo utilizado actual (opcional)</label><input id="currentUsed" type="number" min="0" step="0.01" placeholder="Ej. 450"></div>
+    </div>
+    <div class="actions">
+      <button id="saveCard" class="btn primary">Guardar tarjeta</button>
+      <button id="cancelEdit" class="btn secondary" style="display:none">Cancelar</button>
+    </div>
+    <div class="note"><b>Fecha de corte:</b> si una compra ocurre exactamente ese día, la app asume que podría entrar en el estado de cuenta actual. Para maximizar el plazo, normalmente es más seguro comprar después del corte.</div>
+  </div>
+
+  <div class="card">
+    <div class="section-head">
+      <h2>Tarjetas registradas</h2>
+      <button id="clearAll" class="btn danger" style="display:none">Eliminar todas</button>
+    </div>
+    <div id="cardsList" class="card-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-head"><h2>Respaldo local</h2></div>
+    <div class="backup-grid">
+      <button id="exportBtn" class="btn ghost">Exportar datos</button>
+      <button id="importBtn" class="btn ghost">Importar datos</button>
+      <input id="importFile" type="file" accept="application/json" style="display:none">
+    </div>
+    <div class="privacy">
+      <div>🔒</div>
+      <div><b>Privacidad</b><span>La información se guarda en el navegador de este dispositivo. La app no necesita enviar tus tarjetas a un servidor.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="simulateView" class="view">
+  <div class="page-title">
+    <h1>Simular compra</h1>
+    <p>Indica cuándo comprarías y, si quieres, el monto para considerar el crédito disponible.</p>
+  </div>
+
+  <div class="card">
+    <div class="sim-summary">
+      <div class="field"><label>Fecha de compra</label><input id="purchaseDate" type="date"></div>
+      <div class="field"><label>Monto (opcional)</label><input id="purchaseAmount" type="number" min="0" step="0.01" placeholder="Ej. 500"></div>
+    </div>
+    <button id="calculateBtn" class="btn primary full" style="margin-top:11px">Calcular mejor tarjeta</button>
+  </div>
+  <div id="simulationHero"></div>
+  <div class="card">
+    <div class="section-head"><h2>Comparación</h2><span class="small">Mayor plazo primero</span></div>
+    <div id="simulationRanking" class="compare"></div>
+  </div>
+</section>
+
+<section id="calendarView" class="view">
+  <div class="page-title">
+    <h1>Calendario óptimo</h1>
+    <p>Consulta qué tarjeta maximiza el plazo estimado en cada día del mes.</p>
+  </div>
+  <div class="card">
+    <div class="calendar-toolbar">
+      <div class="field"><label>Mes</label><input id="calendarMonth" type="month"></div>
+      <button id="goTodayMonth" class="btn secondary">Hoy</button>
+    </div>
+    <div id="calendarGrid" class="calendar-grid"></div>
+    <div id="calendarDetail" class="calendar-detail"></div>
+  </div>
+</section>
+</main>
+</div>
+
+<nav class="bottom-nav" aria-label="Navegación principal">
+  <button class="nav-btn active" data-view="homeView"><span class="ico">⌂</span>Inicio</button>
+  <button class="nav-btn" data-view="cardsView"><span class="ico">▣</span>Tarjetas</button>
+  <button class="nav-btn" data-view="simulateView"><span class="ico">◎</span>Simular</button>
+  <button class="nav-btn" data-view="calendarView"><span class="ico">▦</span>Calendario</button>
+</nav>
+
+<div id="toast" class="toast"></div>
 
 <script>
 (() => {
+  // Conserva la misma clave de v1 para mantener las tarjetas ya registradas.
   const STORAGE_KEY = "creditCardOptimizer.cards.v1";
-  let cards = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  let cards = [];
+  try { cards = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { cards = []; }
   let editingId = null;
-
+  let deferredPrompt = null;
+  let selectedCalendarDate = null;
   const $ = id => document.getElementById(id);
 
-  const els = {
-    cardName: $("cardName"),
-    bankName: $("bankName"),
-    cutoffDay: $("cutoffDay"),
-    paymentDay: $("paymentDay"),
-    creditLimit: $("creditLimit"),
-    currentUsed: $("currentUsed"),
-    saveCard: $("saveCard"),
-    cancelEdit: $("cancelEdit"),
-    exportBtn: $("exportBtn"),
-    importBtn: $("importBtn"),
-    importFile: $("importFile"),
-    clearAll: $("clearAll"),
-    cardsList: $("cardsList"),
-    purchaseDate: $("purchaseDate"),
-    purchaseAmount: $("purchaseAmount"),
-    calculateBtn: $("calculateBtn"),
-    recommendation: $("recommendation"),
-    results: $("results"),
-    calendarMonth: $("calendarMonth"),
-    calendarGrid: $("calendarGrid")
-  };
+  const moneyFmt = new Intl.NumberFormat("es-SV",{style:"currency",currency:"USD",maximumFractionDigits:2});
+  const dateFmt = new Intl.DateTimeFormat("es-SV",{day:"2-digit",month:"short",year:"numeric"});
+  const dateLongFmt = new Intl.DateTimeFormat("es-SV",{weekday:"long",day:"numeric",month:"long"});
 
-  function toLocalISO(date){
-    const y = date.getFullYear();
-    const m = String(date.getMonth()+1).padStart(2,"0");
-    const d = String(date.getDate()).padStart(2,"0");
-    return `${y}-${m}-${d}`;
+  function esc(s){return String(s ?? "").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+  function money(v){return moneyFmt.format(Number(v || 0))}
+  function localISO(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+  function monthISO(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`}
+  function dim(y,m){return new Date(y,m+1,0).getDate()}
+  function clampDate(y,m,day){return new Date(y,m,Math.min(Number(day),dim(y,m)))}
+  function addMonthFrom(d,day){return clampDate(d.getFullYear(),d.getMonth()+1,day)}
+  function norm(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
+  function diffDays(a,b){return Math.round((norm(b)-norm(a))/86400000)}
+  function uid(){return (crypto.randomUUID && crypto.randomUUID()) || `${Date.now()}-${Math.random()}`}
+  function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(cards))}
+  function toast(msg){
+    const el=$("toast");el.textContent=msg;el.classList.add("show");
+    clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.remove("show"),2200);
   }
 
-  els.purchaseDate.value = toLocalISO(new Date());
-  els.calendarMonth.value = `${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,"0")}`;
+  function calcCard(card,purchase,amount=null){
+    purchase=norm(purchase);
+    let cutoff=clampDate(purchase.getFullYear(),purchase.getMonth(),card.cutoffDay);
+    const onCut=purchase.getTime()===cutoff.getTime();
+    if(purchase>cutoff) cutoff=addMonthFrom(cutoff,card.cutoffDay);
 
-  function save(){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+    let due=clampDate(cutoff.getFullYear(),cutoff.getMonth(),card.paymentDay);
+    if(due<=cutoff) due=addMonthFrom(due,card.paymentDay);
+
+    const available=card.creditLimit==null?null:Math.max(0,Number(card.creditLimit)-Number(card.currentUsed||0));
+    const eligible=amount==null || amount<=0 || available==null || amount<=available;
+
+    return {...card,cutoff,due,days:diffDays(purchase,due),available,eligible,onCut};
   }
 
-  function money(v){
-    if(v === null || v === undefined || v === "" || Number.isNaN(Number(v))) return "—";
-    return new Intl.NumberFormat("es-SV",{style:"currency",currency:"USD"}).format(Number(v));
+  function ranking(date,amount=null){
+    return cards.map(c=>calcCard(c,date,amount)).sort((a,b)=>{
+      if(a.eligible!==b.eligible) return a.eligible ? -1 : 1;
+      return b.days-a.days || String(a.name).localeCompare(String(b.name));
+    });
   }
 
-  function formatDate(d){
-    return new Intl.DateTimeFormat("es-SV",{day:"2-digit",month:"short",year:"numeric"}).format(d);
-  }
-
-  function daysInMonth(year, monthIndex){
-    return new Date(year, monthIndex + 1, 0).getDate();
-  }
-
-  function dateWithClampedDay(year, monthIndex, day){
-    const maxDay = daysInMonth(year, monthIndex);
-    return new Date(year, monthIndex, Math.min(day, maxDay));
-  }
-
-  function addMonthsClamped(date, months, day){
-    const y = date.getFullYear();
-    const m = date.getMonth() + months;
-    return dateWithClampedDay(y, m, day);
-  }
-
-  function normalizeDate(d){
-    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  }
-
-  function diffDays(a,b){
-    const ms = normalizeDate(b) - normalizeDate(a);
-    return Math.round(ms / 86400000);
-  }
-
-  function calculateCard(card, purchaseDate, amount){
-    const purchase = normalizeDate(purchaseDate);
-    const currentCut = dateWithClampedDay(purchase.getFullYear(), purchase.getMonth(), card.cutoffDay);
-
-    let cutoff;
-    let cutoffDayWarning = false;
-
-    if(purchase <= currentCut){
-      cutoff = currentCut;
-      if(purchase.getTime() === currentCut.getTime()) cutoffDayWarning = true;
-    }else{
-      cutoff = addMonthsClamped(currentCut, 1, card.cutoffDay);
+  function renderHero(result,target,date,context="today"){
+    const el=$(target);
+    if(!result){
+      el.innerHTML=`<div class="card hero no-cards-hero">
+        <div class="eyebrow">Comienza aquí</div>
+        <h2>Registra tu primera tarjeta</h2>
+        <div class="hero-message">Con la fecha de corte y pago podremos calcular automáticamente cuál te conviene usar.</div>
+        <button class="cta" data-go="cardsView">Agregar tarjeta</button>
+      </div>`;
+      bindGoButtons();
+      return;
     }
+    const title=context==="today" ? "Mejor tarjeta para usar hoy" : "Mejor opción para esta compra";
+    const bank=result.bank ? esc(result.bank) : "&nbsp;";
+    el.innerHTML=`<div class="card hero">
+      <div class="hero-top">
+        <div class="eyebrow">${title}</div>
+        <div class="hero-date">${esc(dateLongFmt.format(date))}</div>
+      </div>
+      <h2>${esc(result.name)}</h2>
+      <div class="hero-bank">${bank}</div>
+      <div class="days">${result.days} <span>días aprox. hasta pagar</span></div>
+      <div class="hero-message">${result.onCut ? "⚠️ La compra coincide con el día de corte; se usa una estimación conservadora." : "La compra se proyecta al ciclo que ofrece el mayor plazo según tus fechas registradas."}</div>
+      <div class="hero-meta">
+        <div><b>Corte aplicable</b><span>${dateFmt.format(result.cutoff)}</span></div>
+        <div><b>Pago estimado</b><span>${dateFmt.format(result.due)}</span></div>
+      </div>
+    </div>`;
+  }
 
-    let due = dateWithClampedDay(cutoff.getFullYear(), cutoff.getMonth(), card.paymentDay);
-    if(due <= cutoff){
-      due = addMonthsClamped(due, 1, card.paymentDay);
-    }
+  function renderRanking(arr,target){
+    const el=$(target);
+    if(!arr.length){el.innerHTML=`<div class="empty">No hay tarjetas registradas.</div>`;return}
+    const best=arr.find(x=>x.eligible);
+    el.innerHTML=arr.map(r=>`
+      <div class="compare-row ${best&&r.id===best.id?"best":""}">
+        <div>
+          <strong>${esc(r.name)}</strong>
+          <div class="compare-meta">${esc(r.bank||"Sin banco")} · corte ${r.cutoffDay} · pago ${r.paymentDay}${r.available!=null?` · disponible ${money(r.available)}`:""}</div>
+        </div>
+        <div>${!r.eligible
+          ? `<span class="pill bad">Cupo insuficiente</span>`
+          : r.onCut
+            ? `<span class="pill warn">${r.days} días</span>`
+            : `<span class="pill good">${r.days} días</span>`}
+        </div>
+      </div>`).join("");
+  }
 
-    const available =
-      card.creditLimit != null
-        ? Math.max(0, Number(card.creditLimit) - Number(card.currentUsed || 0))
-        : null;
-
-    const eligible = !amount || available == null || amount <= available;
-
-    return {
-      ...card,
-      cutoff,
-      due,
-      days: diffDays(purchase, due),
-      available,
-      eligible,
-      cutoffDayWarning
-    };
+  function renderHome(){
+    const today=new Date(),arr=ranking(today),best=arr.find(x=>x.eligible);
+    renderHero(best,"todayHero",today,"today");
+    renderRanking(arr,"todayRanking");
+    $("todayLabel").textContent=dateFmt.format(today);
+    $("statCards").textContent=cards.length;
+    $("statDays").textContent=best?best.days:"—";
+    const known=cards.filter(c=>c.creditLimit!=null);
+    if(known.length){
+      const total=known.reduce((s,c)=>s+Math.max(0,Number(c.creditLimit)-Number(c.currentUsed||0)),0);
+      $("statAvailable").textContent=money(total);
+    }else $("statAvailable").textContent="—";
   }
 
   function renderCards(){
-    els.cardsList.innerHTML = "";
-    els.clearAll.style.display = cards.length ? "inline-block" : "none";
-
-    if(!cards.length){
-      els.cardsList.innerHTML = `<div class="empty">Aún no has registrado tarjetas.</div>`;
-      renderResults();
-      return;
-    }
-
-    cards.forEach(card => {
-      const row = document.createElement("div");
-      row.className = "card-row";
-      row.innerHTML = `
+    $("clearAll").style.display=cards.length?"inline-block":"none";
+    const list=$("cardsList");
+    if(!cards.length){list.innerHTML=`<div class="empty">Aún no has registrado tarjetas.</div>`;return}
+    list.innerHTML=cards.map(c=>{
+      const available=c.creditLimit==null?null:Math.max(0,Number(c.creditLimit)-Number(c.currentUsed||0));
+      return `<div class="credit-card">
         <div>
-          <strong>${escapeHtml(card.name)}</strong>
-          <div class="small">
-            ${card.bank ? escapeHtml(card.bank) + " · " : ""}
-            Corte: día ${card.cutoffDay} · Pago: día ${card.paymentDay}
-            ${card.creditLimit != null ? ` · Límite: ${money(card.creditLimit)}` : ""}
-            ${card.currentUsed != null ? ` · Usado: ${money(card.currentUsed)}` : ""}
-          </div>
+          <strong>${esc(c.name)}</strong>
+          <div class="card-sub">${esc(c.bank||"Sin banco")} · corte ${c.cutoffDay} · pago ${c.paymentDay}${available!=null?` · disponible ${money(available)}`:""}</div>
         </div>
         <div class="row-actions">
-          <button class="secondary" data-edit="${card.id}">Editar</button>
-          <button class="danger" data-delete="${card.id}">Eliminar</button>
+          <button class="icon-btn" data-edit="${c.id}">Editar</button>
+          <button class="icon-btn" data-delete="${c.id}">×</button>
         </div>
-      `;
-      els.cardsList.appendChild(row);
-    });
-
-    document.querySelectorAll("[data-edit]").forEach(btn => {
-      btn.addEventListener("click", () => editCard(btn.dataset.edit));
-    });
-    document.querySelectorAll("[data-delete]").forEach(btn => {
-      btn.addEventListener("click", () => deleteCard(btn.dataset.delete));
-    });
-
-    renderResults();
-    renderCalendar();
-  }
-
-  function escapeHtml(str){
-    return String(str ?? "").replace(/[&<>"']/g, m => ({
-      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-    })[m]);
+      </div>`;
+    }).join("");
+    document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editCard(b.dataset.edit));
+    document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteCard(b.dataset.delete));
   }
 
   function resetForm(){
-    editingId = null;
-    ["cardName","bankName","cutoffDay","paymentDay","creditLimit","currentUsed"].forEach(id => els[id].value = "");
-    els.saveCard.textContent = "Guardar tarjeta";
-    els.cancelEdit.style.display = "none";
+    editingId=null;
+    ["cardName","bankName","cutoffDay","paymentDay","creditLimit","currentUsed"].forEach(id=>$(id).value="");
+    $("formTitle").textContent="Agregar tarjeta";$("saveCard").textContent="Guardar tarjeta";$("cancelEdit").style.display="none";
   }
 
   function editCard(id){
-    const card = cards.find(c => c.id === id);
-    if(!card) return;
-    editingId = id;
-    els.cardName.value = card.name || "";
-    els.bankName.value = card.bank || "";
-    els.cutoffDay.value = card.cutoffDay;
-    els.paymentDay.value = card.paymentDay;
-    els.creditLimit.value = card.creditLimit ?? "";
-    els.currentUsed.value = card.currentUsed ?? "";
-    els.saveCard.textContent = "Guardar cambios";
-    els.cancelEdit.style.display = "inline-block";
-    window.scrollTo({top:0,behavior:"smooth"});
+    const c=cards.find(x=>x.id===id);if(!c)return;
+    editingId=id;
+    $("cardName").value=c.name||"";$("bankName").value=c.bank||"";
+    $("cutoffDay").value=c.cutoffDay;$("paymentDay").value=c.paymentDay;
+    $("creditLimit").value=c.creditLimit??"";$("currentUsed").value=c.currentUsed??"";
+    $("formTitle").textContent="Editar tarjeta";$("saveCard").textContent="Guardar cambios";$("cancelEdit").style.display="inline-block";
+    showView("cardsView",false);window.scrollTo({top:0,behavior:"smooth"});
   }
 
   function deleteCard(id){
-    cards = cards.filter(c => c.id !== id);
-    save();
-    if(editingId === id) resetForm();
-    renderCards();
+    cards=cards.filter(c=>c.id!==id);save();if(editingId===id)resetForm();renderAll();toast("Tarjeta eliminada");
   }
 
-  els.saveCard.addEventListener("click", () => {
-    const name = els.cardName.value.trim();
-    const bank = els.bankName.value.trim();
-    const cutoffDay = Number(els.cutoffDay.value);
-    const paymentDay = Number(els.paymentDay.value);
-    const creditLimit = els.creditLimit.value === "" ? null : Number(els.creditLimit.value);
-    const currentUsed = els.currentUsed.value === "" ? null : Number(els.currentUsed.value);
-
-    if(!name || !Number.isInteger(cutoffDay) || cutoffDay < 1 || cutoffDay > 31 ||
-       !Number.isInteger(paymentDay) || paymentDay < 1 || paymentDay > 31){
-      alert("Completa el nombre de la tarjeta y usa días válidos entre 1 y 31.");
-      return;
+  $("saveCard").onclick=()=>{
+    const name=$("cardName").value.trim(),bank=$("bankName").value.trim();
+    const cutoffDay=Number($("cutoffDay").value),paymentDay=Number($("paymentDay").value);
+    const creditLimit=$("creditLimit").value===""?null:Number($("creditLimit").value);
+    const currentUsed=$("currentUsed").value===""?null:Number($("currentUsed").value);
+    if(!name||!Number.isInteger(cutoffDay)||cutoffDay<1||cutoffDay>31||!Number.isInteger(paymentDay)||paymentDay<1||paymentDay>31){
+      toast("Completa el nombre y usa días válidos del 1 al 31");return;
     }
+    if((creditLimit!=null&&creditLimit<0)||(currentUsed!=null&&currentUsed<0)){toast("Los montos no pueden ser negativos");return}
+    const data={id:editingId||uid(),name,bank,cutoffDay,paymentDay,creditLimit,currentUsed};
+    cards=editingId?cards.map(c=>c.id===editingId?data:c):[...cards,data];
+    save();resetForm();renderAll();toast(editingId?"Cambios guardados":"Tarjeta guardada");
+  };
+  $("cancelEdit").onclick=resetForm;
+  $("clearAll").onclick=()=>{if(confirm("¿Eliminar todas las tarjetas guardadas en este dispositivo?")){cards=[];save();resetForm();renderAll();toast("Tarjetas eliminadas")}};
 
-    if(creditLimit != null && creditLimit < 0){
-      alert("El límite de crédito no puede ser negativo.");
-      return;
-    }
-    if(currentUsed != null && currentUsed < 0){
-      alert("El saldo utilizado no puede ser negativo.");
-      return;
-    }
-
-    const data = {
-      id: editingId || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
-      name, bank, cutoffDay, paymentDay, creditLimit, currentUsed
-    };
-
-    if(editingId){
-      cards = cards.map(c => c.id === editingId ? data : c);
-    }else{
-      cards.push(data);
-    }
-
-    save();
-    resetForm();
-    renderCards();
-  });
-
-  els.cancelEdit.addEventListener("click", resetForm);
-
-  els.clearAll.addEventListener("click", () => {
-    if(confirm("¿Eliminar todas las tarjetas guardadas en este navegador?")){
-      cards = [];
-      save();
-      resetForm();
-      renderCards();
-    }
-  });
-
-  els.calculateBtn.addEventListener("click", renderResults);
-  els.purchaseDate.addEventListener("change", renderResults);
-  els.purchaseAmount.addEventListener("input", renderResults);
-
-  function renderResults(){
-    if(!cards.length){
-      els.recommendation.innerHTML = "";
-      els.results.innerHTML = `<div class="empty">Registra al menos una tarjeta para comparar.</div>`;
-      return;
-    }
-
-    if(!els.purchaseDate.value){
-      els.results.innerHTML = `<div class="empty">Selecciona una fecha de compra.</div>`;
-      return;
-    }
-
-    const purchase = new Date(els.purchaseDate.value + "T00:00:00");
-    const amount = els.purchaseAmount.value === "" ? null : Number(els.purchaseAmount.value);
-
-    const calculated = cards
-      .map(card => calculateCard(card, purchase, amount))
-      .sort((a,b) => {
-        if(a.eligible !== b.eligible) return a.eligible ? -1 : 1;
-        return b.days - a.days;
-      });
-
-    const best = calculated.find(x => x.eligible);
-
-    if(best){
-      let extra = "";
-      if(best.cutoffDayWarning){
-        extra = `<div style="margin-top:10px;font-size:12px;opacity:.9">
-          ⚠️ La compra coincide con la fecha de corte. El cálculo usa un escenario conservador.
-        </div>`;
-      }
-      els.recommendation.innerHTML = `
-        <div class="hero">
-          <div class="eyebrow">Mejor opción estimada</div>
-          <h3>${escapeHtml(best.name)}</h3>
-          <div class="days">${best.days} <span>días aprox. hasta pagar</span></div>
-          <div class="meta">
-            <div><b>Próximo corte aplicable</b><span>${formatDate(best.cutoff)}</span></div>
-            <div><b>Fecha límite estimada</b><span>${formatDate(best.due)}</span></div>
-          </div>
-          ${extra}
-        </div>
-      `;
-    }else{
-      els.recommendation.innerHTML = `
-        <div class="note">
-          Ninguna tarjeta tiene crédito disponible suficiente para el monto simulado, según los límites y saldos registrados.
-        </div>
-      `;
-    }
-
-    const rows = calculated.map((r, i) => {
-      const isBest = best && r.id === best.id;
-      let status = `<span class="pill good">${r.days} días</span>`;
-      if(!r.eligible) status = `<span class="pill bad">Crédito insuficiente</span>`;
-      else if(r.cutoffDayWarning) status = `<span class="pill warn">${r.days} días · día de corte</span>`;
-
-      return `
-        <tr class="${isBest ? "best" : ""}">
-          <td>
-            <strong>${escapeHtml(r.name)}</strong>
-            <div class="small">${r.bank ? escapeHtml(r.bank) : ""}</div>
-          </td>
-          <td>Día ${r.cutoffDay}</td>
-          <td>${formatDate(r.cutoff)}</td>
-          <td>${formatDate(r.due)}</td>
-          <td>${status}</td>
-          <td>${r.available == null ? "—" : money(r.available)}</td>
-        </tr>
-      `;
-    }).join("");
-
-    els.results.innerHTML = `
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Tarjeta</th>
-              <th>Corte habitual</th>
-              <th>Corte de esta compra</th>
-              <th>Pago estimado</th>
-              <th>Plazo</th>
-              <th>Crédito disponible</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-    `;
+  function renderSimulation(){
+    if(!$("purchaseDate").value)return;
+    const d=new Date($("purchaseDate").value+"T00:00:00");
+    const amount=$("purchaseAmount").value===""?null:Number($("purchaseAmount").value);
+    const arr=ranking(d,amount),best=arr.find(x=>x.eligible);
+    renderHero(best,"simulationHero",d,"simulation");renderRanking(arr,"simulationRanking");
   }
-
+  $("calculateBtn").onclick=renderSimulation;
+  $("purchaseDate").onchange=renderSimulation;
+  $("purchaseAmount").oninput=renderSimulation;
 
   function renderCalendar(){
-    if(!els.calendarMonth.value) return;
-    const [year, monthOne] = els.calendarMonth.value.split("-").map(Number);
-    const month = monthOne - 1;
-    const first = new Date(year, month, 1);
-    const mondayIndex = (first.getDay() + 6) % 7;
-    const labels = ["L","M","X","J","V","S","D"];
-    let html = labels.map(x => `<div class="calendar-dow">${x}</div>`).join("");
-    for(let i=0;i<mondayIndex;i++) html += `<div class="calendar-day empty-day"></div>`;
-    const totalDays = daysInMonth(year, month);
-    for(let day=1; day<=totalDays; day++){
-      const purchase = new Date(year, month, day);
-      const ranked = cards
-        .map(card => calculateCard(card, purchase, null))
-        .sort((a,b) => b.days - a.days);
-      const best = ranked[0];
-      html += `<div class="calendar-day">
-        <div class="calendar-num">${day}</div>
-        ${best ? `<div class="calendar-card">${escapeHtml(best.name)}</div><div class="calendar-days">${best.days} días</div>` : `<div class="calendar-card">—</div>`}
+    const v=$("calendarMonth").value;if(!v)return;
+    const [y,m1]=v.split("-").map(Number),m=m1-1;
+    const first=new Date(y,m,1),offset=(first.getDay()+6)%7;
+    const labels=["L","M","X","J","V","S","D"];
+    let html=labels.map(x=>`<div class="dow">${x}</div>`).join("");
+    for(let i=0;i<offset;i++)html+=`<div class="day blank"></div>`;
+    const today=norm(new Date());
+    for(let day=1;day<=dim(y,m);day++){
+      const d=new Date(y,m,day),arr=ranking(d),best=arr.find(x=>x.eligible);
+      const isToday=d.getTime()===today.getTime();
+      const isSelected=selectedCalendarDate&&d.getTime()===norm(selectedCalendarDate).getTime();
+      html+=`<div class="day ${isToday?"today":""} ${isSelected?"selected":""}" data-date="${localISO(d)}">
+        <div class="day-num">${day}</div>
+        ${best?`<div class="day-card">${esc(best.name)}</div><div class="day-days">${best.days} días</div>`:`<div class="day-card">—</div>`}
       </div>`;
     }
-    els.calendarGrid.innerHTML = html;
-  }
-
-  els.calendarMonth.addEventListener("change", renderCalendar);
-
-  els.exportBtn.addEventListener("click", () => {
-    const blob = new Blob([JSON.stringify(cards, null, 2)], {type:"application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "mis_tarjetas_credito.json";
-    a.click();
-    URL.revokeObjectURL(url);
-  });
-
-  els.importBtn.addEventListener("click", () => els.importFile.click());
-
-  els.importFile.addEventListener("change", async () => {
-    const file = els.importFile.files[0];
-    if(!file) return;
-    try{
-      const data = JSON.parse(await file.text());
-      if(!Array.isArray(data)) throw new Error("Formato inválido");
-      const valid = data.every(c =>
-        c && c.name && Number.isInteger(Number(c.cutoffDay)) && Number.isInteger(Number(c.paymentDay))
-      );
-      if(!valid) throw new Error("Datos incompletos");
-      cards = data.map(c => ({
-        id: c.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random())),
-        name: String(c.name),
-        bank: String(c.bank || ""),
-        cutoffDay: Number(c.cutoffDay),
-        paymentDay: Number(c.paymentDay),
-        creditLimit: c.creditLimit === null || c.creditLimit === undefined || c.creditLimit === "" ? null : Number(c.creditLimit),
-        currentUsed: c.currentUsed === null || c.currentUsed === undefined || c.currentUsed === "" ? null : Number(c.currentUsed)
-      }));
-      save();
-      renderCards();
-      alert("Datos importados correctamente.");
-    }catch(e){
-      alert("No se pudo importar el archivo. Verifica que sea una exportación válida de esta herramienta.");
-    }finally{
-      els.importFile.value = "";
-    }
-  });
-
-
-  // PWA: instalación y funcionamiento offline
-  let deferredInstallPrompt = null;
-  const installAppBtn = document.getElementById("installApp");
-
-  window.addEventListener("beforeinstallprompt", (event) => {
-    event.preventDefault();
-    deferredInstallPrompt = event;
-    installAppBtn.style.display = "block";
-  });
-
-  installAppBtn.addEventListener("click", async () => {
-    if (!deferredInstallPrompt) {
-      alert("Si no aparece el instalador, abre el menú del navegador y elige 'Agregar a pantalla de inicio' o 'Instalar aplicación'.");
-      return;
-    }
-    deferredInstallPrompt.prompt();
-    await deferredInstallPrompt.userChoice;
-    deferredInstallPrompt = null;
-    installAppBtn.style.display = "none";
-  });
-
-  window.addEventListener("appinstalled", () => {
-    installAppBtn.style.display = "none";
-  });
-
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js").catch(console.error);
+    $("calendarGrid").innerHTML=html;
+    document.querySelectorAll(".day[data-date]").forEach(el=>el.onclick=()=>{
+      selectedCalendarDate=new Date(el.dataset.date+"T00:00:00");renderCalendar();renderCalendarDetail();
     });
+    if(!selectedCalendarDate||selectedCalendarDate.getFullYear()!==y||selectedCalendarDate.getMonth()!==m){
+      selectedCalendarDate=new Date(y,m,1);
+    }
+    renderCalendarDetail();
   }
 
-  renderCards();
-  renderCalendar();
+  function renderCalendarDetail(){
+    const d=selectedCalendarDate;if(!d)return;
+    const arr=ranking(d),best=arr.find(x=>x.eligible);
+    const target=$("calendarDetail");
+    if(!best){target.innerHTML=`<div class="empty">Registra tarjetas para obtener recomendaciones.</div>`;return}
+    target.innerHTML=`<div class="section-head"><h2>${esc(dateLongFmt.format(d))}</h2><span class="pill good">${best.days} días</span></div>
+      <div class="compare-row best"><div><strong>${esc(best.name)}</strong><div class="compare-meta">Corte ${dateFmt.format(best.cutoff)} · pago ${dateFmt.format(best.due)}</div></div><div class="pill good">Mejor opción</div></div>`;
+  }
+
+  $("calendarMonth").onchange=()=>{selectedCalendarDate=null;renderCalendar()};
+  $("goTodayMonth").onclick=()=>{$("calendarMonth").value=monthISO(new Date());selectedCalendarDate=new Date();renderCalendar()};
+
+  $("exportBtn").onclick=()=>{
+    const blob=new Blob([JSON.stringify(cards,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download="mis_tarjetas_credito.json";a.click();URL.revokeObjectURL(url);
+  };
+  $("importBtn").onclick=()=>$("importFile").click();
+  $("importFile").onchange=async()=>{
+    const file=$("importFile").files[0];if(!file)return;
+    try{
+      const data=JSON.parse(await file.text());
+      if(!Array.isArray(data))throw new Error();
+      cards=data.map(c=>({
+        id:c.id||uid(),name:String(c.name||"Tarjeta"),bank:String(c.bank||""),
+        cutoffDay:Number(c.cutoffDay),paymentDay:Number(c.paymentDay),
+        creditLimit:c.creditLimit==null?null:Number(c.creditLimit),
+        currentUsed:c.currentUsed==null?null:Number(c.currentUsed)
+      })).filter(c=>c.cutoffDay>=1&&c.cutoffDay<=31&&c.paymentDay>=1&&c.paymentDay<=31);
+      save();renderAll();toast("Datos importados correctamente");
+    }catch{toast("No se pudo importar el archivo")}
+    $("importFile").value="";
+  };
+
+  function showView(id,scroll=true){
+    document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));
+    document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));
+    if(id==="calendarView")renderCalendar();
+    if(id==="simulateView")renderSimulation();
+    if(scroll)window.scrollTo({top:0,behavior:"smooth"});
+  }
+  document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));
+  function bindGoButtons(){document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showView(b.dataset.go))}
+  bindGoButtons();
+
+  window.addEventListener("beforeinstallprompt",e=>{
+    e.preventDefault();deferredPrompt=e;$("installBtn").style.display="inline-block";
+  });
+  $("installBtn").onclick=async()=>{
+    if(!deferredPrompt)return;
+    deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$("installBtn").style.display="none";
+  };
+  window.addEventListener("appinstalled",()=>{$("installBtn").style.display="none";toast("Aplicación instalada")});
+
+  if("serviceWorker" in navigator){
+    window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));
+  }
+
+  $("purchaseDate").value=localISO(new Date());
+  $("calendarMonth").value=monthISO(new Date());
+  selectedCalendarDate=new Date();
+
+  function renderAll(){renderHome();renderCards();renderSimulation();renderCalendar();bindGoButtons()}
+  renderAll();
 })();
 </script>
 </body>
