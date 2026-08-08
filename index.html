@@ -39,8 +39,69 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
 .payment-row.overdue{border-color:#efcccc;background:#fff8f8}.payment-row.soon{border-color:#eadcae;background:#fffdf5}.payment-date{font-size:10px;font-weight:800;color:var(--muted);margin-bottom:4px}.payment-actions{display:flex;flex-direction:column;align-items:flex-end;gap:6px}.payment-actions button{padding:7px 9px}.payment-summary{font-size:10px;color:var(--muted);line-height:1.4;margin-top:3px}
 .sim-summary{display:grid;grid-template-columns:1fr 1fr;gap:9px}.sim-summary .field{margin:0}.calendar-toolbar{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;margin-bottom:12px}.calendar-toolbar .field{margin:0}.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.dow{text-align:center;font-size:9px;color:var(--muted);font-weight:850;padding:3px}.day{min-height:63px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:5px;cursor:pointer}.day.blank{background:transparent;border-color:transparent;cursor:default}.day.today{border-color:#80a9d2;box-shadow:inset 0 0 0 1px #80a9d2}.day.selected{background:var(--brand-soft);border-color:#86acd3}.day-num{font-size:10px;font-weight:900}.day-card{font-size:8px;line-height:1.15;font-weight:850;color:var(--brand);margin-top:7px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.day-days{font-size:8px;color:var(--good);font-weight:800;margin-top:2px}.calendar-detail{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
 .backup-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.privacy{display:flex;gap:9px;align-items:flex-start;background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:11px;margin-top:12px}.privacy b{font-size:11px;display:block;margin-bottom:2px}.privacy span{font-size:10px;color:var(--muted);line-height:1.4}.footer-note{font-size:10px;color:var(--muted);line-height:1.5;padding:0 2px 10px}
-.bottom-nav{position:fixed;z-index:30;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);padding:7px 5px calc(7px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-top:1px solid var(--line)}.nav-btn{border:0;background:transparent;color:#7a8495;border-radius:11px;padding:5px 1px 4px;font-size:8px;font-weight:800;min-width:0}.nav-btn .ico{display:block;font-size:19px;line-height:1;margin-bottom:4px}.nav-btn.active{color:var(--brand);background:var(--brand-soft)}
+.bottom-nav{position:fixed;z-index:30;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(6,1fr);padding:7px 5px calc(7px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-top:1px solid var(--line)}.nav-btn{border:0;background:transparent;color:#7a8495;border-radius:11px;padding:5px 1px 4px;font-size:8px;font-weight:800;min-width:0}.nav-btn .ico{display:block;font-size:19px;line-height:1;margin-bottom:4px}.nav-btn.active{color:var(--brand);background:var(--brand-soft)}
 .toast{position:fixed;z-index:50;left:50%;bottom:calc(var(--nav-h) + 16px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;pointer-events:none;max-width:calc(100vw - 30px);background:#172033;color:#fff;padding:10px 13px;border-radius:12px;font-size:11px;box-shadow:0 12px 30px rgba(0,0,0,.18);transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* v1.6 / v1.7 / v1.9 */
+.alert-stack{display:grid;gap:8px}
+.alert-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.alert-item.warn{background:#fffdf5;border-color:#eadcae}
+.alert-item.bad{background:#fff8f8;border-color:#efcccc}
+.alert-item.good{background:#f5fbf7;border-color:#d5eadc}
+.alert-icon{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;background:#eef3f8;font-size:15px}
+.alert-item strong{display:block;font-size:11px}
+.alert-item .alert-copy{font-size:9px;color:var(--muted);line-height:1.4;margin-top:2px}
+.alert-side{text-align:right;font-size:9px;font-weight:850;color:var(--muted)}
+.dashboard-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpi{border:1px solid var(--line);border-radius:14px;padding:12px;background:#f8fafc}
+.kpi b{display:block;font-size:20px;line-height:1.1}
+.kpi span{display:block;font-size:9px;color:var(--muted);margin-top:4px;line-height:1.3}
+.chart{display:grid;gap:9px}
+.bar-row{display:grid;grid-template-columns:minmax(72px,.8fr) minmax(90px,2fr) auto;gap:8px;align-items:center}
+.bar-label{font-size:9px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{height:9px;background:#edf0f4;border-radius:999px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--brand2),var(--brand));border-radius:999px;min-width:2px}
+.bar-value{font-size:9px;font-weight:850;text-align:right}
+.trend-chart{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;align-items:end;height:165px;padding:12px 4px 2px}
+.trend-col{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;min-width:0}
+.trend-value{font-size:8px;font-weight:800;white-space:nowrap}
+.trend-track{width:100%;max-width:38px;height:112px;display:flex;align-items:flex-end;background:#f0f3f7;border-radius:9px 9px 3px 3px;overflow:hidden}
+.trend-bar{width:100%;background:linear-gradient(180deg,var(--brand2),var(--brand));border-radius:8px 8px 0 0;min-height:2px}
+.trend-label{font-size:8px;color:var(--muted);text-transform:capitalize}
+.util-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:11px}
+.util-row{padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.util-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.util-head strong{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.util-percent{font-size:11px;font-weight:900}
+.util-track{height:9px;background:#edf0f4;border-radius:999px;overflow:hidden;margin:8px 0 5px}
+.util-fill{height:100%;border-radius:999px}
+.util-fill.good{background:#2b8a5a}.util-fill.warn{background:#c38a22}.util-fill.bad{background:#bf3f3f}
+.util-meta{font-size:9px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.recommend-box{padding:12px;border-radius:14px;background:var(--brand-soft);border:1px solid #d5e3f2;font-size:10px;line-height:1.5}
+.recommend-box strong{font-size:11px}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.check-grid{display:grid;gap:7px;margin:10px 0}
+.check-row{display:flex;align-items:flex-start;gap:8px;padding:9px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:10px;line-height:1.35}
+.check-row input{width:auto;min-height:0;margin:2px 0 0;padding:0;box-shadow:none}
+.permission-box{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:14px;background:#f8fafc;margin-bottom:10px}
+.permission-box strong{display:block;font-size:11px}.permission-box span{font-size:9px;color:var(--muted)}
+.month-toolbar{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+.month-toolbar .field{margin:0}
+.sim-util{margin-top:10px}
+@media(max-width:430px){
+  .bottom-nav{padding-left:2px;padding-right:2px}
+  .nav-btn{font-size:7px}.nav-btn .ico{font-size:18px}
+  .dashboard-metrics{grid-template-columns:1fr 1fr}
+  .util-summary{grid-template-columns:1fr 1fr 1fr}
+  .settings-grid{grid-template-columns:1fr}
+  .bar-row{grid-template-columns:70px minmax(60px,1fr) auto}
+}
+@media(min-width:700px){
+  .dashboard-metrics{grid-template-columns:repeat(4,1fr)}
+  .analytics-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+  .analytics-two>.card{margin-bottom:0}
+}
+
 @media(max-width:430px){.brand-text span{display:none}.install-btn{padding:8px 9px}.metric b{font-size:16px}.purchase-preview-grid{grid-template-columns:1fr 1fr 1fr}}
 @media(min-width:700px){main{padding:22px}.page-title h1{font-size:28px}.form-grid{grid-template-columns:1fr 1fr;gap:0 12px}.home-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;align-items:start}.home-grid>.card,.home-grid>.hero{margin-bottom:0}.hero{min-height:322px;display:flex;flex-direction:column}.hero-meta{margin-top:auto}.day{min-height:82px;padding:7px}.day-card,.day-days{font-size:9px}.bottom-nav{left:50%;right:auto;transform:translateX(-50%);width:min(680px,calc(100% - 24px));border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;box-shadow:0 -8px 24px rgba(25,45,75,.08)}.nav-btn{font-size:9px}.purchase-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}}
 @media(min-width:980px){.appbar{border-radius:0 0 16px 16px}main{padding:26px 24px}.calendar-grid{gap:7px}.dashboard-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}.dashboard-two>.card{margin-bottom:0}}
@@ -49,7 +110,7 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
 <body>
 <div class="app-shell">
 <header class="appbar">
-  <div class="brand"><div class="brand-mark">◈</div><div class="brand-text"><strong>Optimizador de Tarjetas</strong><span>Flujo de caja y período de gracia · v1.3</span></div></div>
+  <div class="brand"><div class="brand-mark">◈</div><div class="brand-text"><strong>Optimizador de Tarjetas</strong><span>Flujo de caja, alertas y analítica · v1.9</span></div></div>
   <button id="installBtn" class="install-btn">Instalar app</button>
 </header>
 <main>
@@ -58,6 +119,12 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
   <div class="home-grid">
     <div id="todayHero"></div>
     <div class="card"><div class="section-head"><h2>Ranking de hoy</h2><span id="todayLabel" class="small"></span></div><div id="todayRanking" class="compare"></div></div>
+  </div>
+
+
+  <div id="homeAlertsCard" class="card" style="display:none">
+    <div class="section-head"><h2>Alertas importantes</h2><button class="btn ghost" data-go="dashboardView">Ver panel</button></div>
+    <div id="homeAlerts" class="alert-stack"></div>
   </div>
 
   <div class="card cash-card">
@@ -79,10 +146,89 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
     <div class="card">
       <div class="section-head"><h2>Accesos rápidos</h2></div>
       <div class="quick-grid"><button class="quick-btn" data-go="purchasesView"><b>Registrar compra</b><span>Asigna automáticamente su ciclo</span></button><button class="quick-btn" data-go="simulateView"><b>Simular compra</b><span>Compara antes de gastar</span></button></div>
-      <div class="quick-grid" style="margin-top:9px"><button class="quick-btn" data-go="calendarView"><b>Ver calendario</b><span>Mejor tarjeta cada día</span></button><button class="quick-btn" data-go="cardsView"><b>Gestionar tarjetas</b><span>Fechas y límites</span></button></div>
+      <div class="quick-grid" style="margin-top:9px"><button class="quick-btn" data-go="dashboardView"><b>Dashboard mensual</b><span>Gasto, categorías y utilización</span></button><button class="quick-btn" data-go="calendarView"><b>Ver calendario</b><span>Mejor tarjeta cada día</span></button></div>
     </div>
   </div>
   <div class="footer-note">La app funciona como herramienta de planificación. Verifica siempre el estado de cuenta del emisor y paga el monto requerido para no generar intereses antes de su fecha límite.</div>
+</section>
+
+
+<section id="dashboardView" class="view">
+  <div class="page-title"><h1>Dashboard financiero</h1><p>Analiza tus compras, obligaciones, utilización de crédito y alertas en un solo lugar.</p></div>
+
+  <div class="card">
+    <div class="month-toolbar">
+      <div class="field"><label>Mes de análisis</label><input id="dashboardMonth" type="month"></div>
+      <button id="dashboardToday" class="btn secondary">Mes actual</button>
+    </div>
+    <div class="dashboard-metrics" style="margin-top:12px">
+      <div class="kpi"><b id="dashSpend">$0.00</b><span>Compras realizadas en el mes</span></div>
+      <div class="kpi"><b id="dashPending">$0.00</b><span>De esas compras, aún pendientes</span></div>
+      <div class="kpi"><b id="dashDue">$0.00</b><span>Pagos con vencimiento en el mes</span></div>
+      <div class="kpi"><b id="dashCount">0</b><span>Número de compras</span></div>
+    </div>
+  </div>
+
+  <div class="analytics-two">
+    <div class="card">
+      <div class="section-head"><h2>Gasto por categoría</h2><span class="small">Mes seleccionado</span></div>
+      <div id="categoryChart" class="chart"></div>
+    </div>
+    <div class="card">
+      <div class="section-head"><h2>Gasto por tarjeta</h2><span class="small">Mes seleccionado</span></div>
+      <div id="cardChart" class="chart"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-head"><h2>Tendencia de 6 meses</h2><span class="small">Por fecha de compra</span></div>
+    <div id="trendChart" class="trend-chart"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-head"><h2>Utilización de crédito</h2><span class="small">v1.9</span></div>
+    <div class="util-summary">
+      <div class="metric"><b id="totalUtilization">—</b><span>Utilización total conocida</span></div>
+      <div class="metric"><b id="totalCreditLimit">—</b><span>Límite total conocido</span></div>
+      <div class="metric"><b id="totalReportedUsed">—</b><span>Saldo utilizado reportado</span></div>
+    </div>
+    <div id="utilizationList" class="stack"></div>
+    <div id="utilizationRecommendation" class="recommend-box" style="margin-top:10px"></div>
+    <div class="note">Los umbrales de utilización son parámetros personales de gestión de liquidez; no representan una regla universal de calificación crediticia.</div>
+  </div>
+
+  <div class="card">
+    <div class="section-head"><h2>Umbrales de utilización</h2><span class="small">Configurable</span></div>
+    <div class="settings-grid">
+      <div class="field"><label>Objetivo máximo (%)</label><input id="targetUtilization" type="number" min="1" max="100" step="1"></div>
+      <div class="field"><label>Alerta alta (%)</label><input id="warningUtilization" type="number" min="1" max="100" step="1"></div>
+    </div>
+    <button id="saveUtilSettings" class="btn secondary full">Guardar umbrales</button>
+  </div>
+
+  <div class="card">
+    <div class="section-head"><h2>Alertas y recordatorios</h2><span class="small">v1.6</span></div>
+    <div class="permission-box">
+      <div><strong id="notificationPermissionTitle">Notificaciones del dispositivo</strong><span id="notificationPermissionText">Consulta el estado del permiso.</span></div>
+      <button id="enableNotifications" class="btn primary">Activar</button>
+    </div>
+    <div class="settings-grid">
+      <div class="field"><label>Avisar pagos con anticipación (días)</label><input id="reminderDays" type="number" min="0" max="30" step="1"></div>
+      <div class="field"><label>Avisar corte con anticipación (días)</label><input id="cutoffReminderDays" type="number" min="0" max="10" step="1"></div>
+    </div>
+    <div class="check-grid">
+      <label class="check-row"><input id="notifyPayments" type="checkbox"><span><b>Pagos próximos</b><br>Alertar por pagos próximos o vencidos registrados en la app.</span></label>
+      <label class="check-row"><input id="notifyCutoffs" type="checkbox"><span><b>Fechas de corte</b><br>Recordar cuando una tarjeta se acerca a su fecha de corte.</span></label>
+      <label class="check-row"><input id="notifyUtilization" type="checkbox"><span><b>Utilización alta</b><br>Alertar cuando una tarjeta supera el umbral configurado.</span></label>
+    </div>
+    <div class="actions">
+      <button id="saveReminderSettings" class="btn secondary">Guardar recordatorios</button>
+      <button id="checkAlertsNow" class="btn ghost">Revisar ahora</button>
+    </div>
+    <div class="note">Sin un servidor push, las notificaciones del sistema se evalúan cuando abres/actualizas la PWA o mientras permanece activa. Las alertas dentro de la app siempre se calculan con los datos actuales.</div>
+    <div class="section-head" style="margin-top:14px"><h2>Alertas actuales</h2><span id="alertCount" class="small"></span></div>
+    <div id="dashboardAlerts" class="alert-stack"></div>
+  </div>
 </section>
 
 <section id="cardsView" class="view">
@@ -130,6 +276,7 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
   <div class="page-title"><h1>Simular compra</h1><p>Compara antes de comprar; el monto puede descartar tarjetas sin crédito disponible suficiente.</p></div>
   <div class="card"><div class="sim-summary"><div class="field"><label>Fecha de compra</label><input id="purchaseDate" type="date"></div><div class="field"><label>Monto (opcional)</label><input id="purchaseAmount" type="number" min="0" step="0.01" placeholder="Ej. 500"></div></div><button id="calculateBtn" class="btn primary full" style="margin-top:11px">Calcular mejor tarjeta</button></div>
   <div id="simulationHero"></div>
+  <div id="utilizationSuggestion" class="sim-util"></div>
   <div class="card"><div class="section-head"><h2>Comparación</h2><span class="small">Mayor plazo primero</span></div><div id="simulationRanking" class="compare"></div></div>
 </section>
 
@@ -141,6 +288,7 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
 </div>
 <nav class="bottom-nav" aria-label="Navegación principal">
   <button class="nav-btn active" data-view="homeView"><span class="ico">⌂</span>Inicio</button>
+  <button class="nav-btn" data-view="dashboardView"><span class="ico">▥</span>Panel</button>
   <button class="nav-btn" data-view="cardsView"><span class="ico">▣</span>Tarjetas</button>
   <button class="nav-btn" data-view="purchasesView"><span class="ico">＋</span>Compras</button>
   <button class="nav-btn" data-view="simulateView"><span class="ico">◎</span>Simular</button>
@@ -152,10 +300,22 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
   const CARDS_KEY="creditCardOptimizer.cards.v1";
   const TX_KEY="creditCardOptimizer.transactions.v1";
   const SETTINGS_KEY="creditCardOptimizer.settings.v1";
-  let cards=[], transactions=[], settings={liquidFunds:null}, editingId=null, deferredPrompt=null, selectedCalendarDate=null, purchaseFilter="pending";
+  const DEFAULT_SETTINGS={
+    liquidFunds:null,
+    reminderDays:7,
+    cutoffReminderDays:1,
+    notifyPayments:true,
+    notifyCutoffs:true,
+    notifyUtilization:true,
+    targetUtilization:30,
+    warningUtilization:50,
+    notificationKeys:{}
+  };
+  let cards=[], transactions=[], settings={...DEFAULT_SETTINGS}, editingId=null, deferredPrompt=null, selectedCalendarDate=null, purchaseFilter="pending";
   try{cards=JSON.parse(localStorage.getItem(CARDS_KEY)||"[]")}catch{cards=[]}
   try{transactions=JSON.parse(localStorage.getItem(TX_KEY)||"[]")}catch{transactions=[]}
-  try{settings={...settings,...JSON.parse(localStorage.getItem(SETTINGS_KEY)||"{}")}}catch{}
+  try{settings={...DEFAULT_SETTINGS,...JSON.parse(localStorage.getItem(SETTINGS_KEY)||"{}")}}catch{}
+  if(!settings.notificationKeys||typeof settings.notificationKeys!=="object")settings.notificationKeys={};
   const $=id=>document.getElementById(id);
   const moneyFmt=new Intl.NumberFormat("es-SV",{style:"currency",currency:"USD",maximumFractionDigits:2});
   const dateFmt=new Intl.DateTimeFormat("es-SV",{day:"2-digit",month:"short",year:"numeric"});
@@ -176,6 +336,107 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
   function saveSettings(){localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings))}
   function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add("show");clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.remove("show"),2300)}
   function getCard(id){return cards.find(c=>c.id===id)}
+
+  function utilizationPct(card,extraAmount=0){
+    const limit=Number(card?.creditLimit);
+    if(!limit||limit<=0)return null;
+    const used=Math.max(0,Number(card.currentUsed||0)+Number(extraAmount||0));
+    return Math.max(0,(used/limit)*100);
+  }
+  function utilizationClass(pct){
+    if(pct==null)return"neutral";
+    if(pct>=Number(settings.warningUtilization||50))return"bad";
+    if(pct>=Number(settings.targetUtilization||30))return"warn";
+    return"good";
+  }
+  function nextCutoffDate(card,from=new Date()){
+    const base=norm(from);
+    let d=clampDate(base.getFullYear(),base.getMonth(),card.cutoffDay);
+    if(d<base)d=clampDate(base.getFullYear(),base.getMonth()+1,card.cutoffDay);
+    return d;
+  }
+  function selectedMonthTx(monthStr){
+    return transactions.filter(t=>String(t.date||"").slice(0,7)===monthStr);
+  }
+  function selectedMonthDue(monthStr){
+    return transactions.filter(t=>String(t.dueDate||"").slice(0,7)===monthStr&&t.status!=="paid");
+  }
+  function sumTx(list){return list.reduce((s,t)=>s+Number(t.amount||0),0)}
+  function groupSums(list,keyFn){
+    const map=new Map();
+    list.forEach(item=>{
+      const key=keyFn(item)||"Sin categoría";
+      map.set(key,(map.get(key)||0)+Number(item.amount||0));
+    });
+    return [...map.entries()].sort((a,b)=>b[1]-a[1]);
+  }
+  function addMonthsDate(date,delta){
+    const d=new Date(date.getFullYear(),date.getMonth()+delta,1);
+    return d;
+  }
+  function alertData(){
+    const alerts=[],today=norm(new Date());
+    if(settings.notifyPayments){
+      paymentGroups().forEach(g=>{
+        const st=paymentState(g),card=getCard(g.cardId);
+        if(st.days<=Number(settings.reminderDays||0)){
+          alerts.push({
+            key:`payment|${g.key}`,
+            priority:st.days<0?4:st.days===0?4:3,
+            cls:st.days<=0?"bad":"warn",
+            icon:st.days<0?"!":"$",
+            title:st.days<0?`Pago vencido · ${card?.name||"Tarjeta"}`:st.days===0?`Pago vence hoy · ${card?.name||"Tarjeta"}`:`Pago próximo · ${card?.name||"Tarjeta"}`,
+            copy:`${money(g.total)} · ${g.count} ${g.count===1?"compra":"compras"} · vencimiento ${dateFmt.format(parseISO(g.dueDate))}`,
+            side:st.label,
+            notificationTitle:st.days<0?"Pago de tarjeta vencido":st.days===0?"Pago de tarjeta vence hoy":"Pago de tarjeta próximo",
+            notificationBody:`${card?.name||"Tarjeta"}: ${money(g.total)} · ${st.label}`
+          });
+        }
+      });
+    }
+    if(settings.notifyCutoffs){
+      cards.forEach(card=>{
+        const cutoff=nextCutoffDate(card,today),days=diffDays(today,cutoff);
+        if(days<=Number(settings.cutoffReminderDays||0)){
+          alerts.push({
+            key:`cutoff|${card.id}|${localISO(cutoff)}`,
+            priority:1,cls:"good",icon:"✂",
+            title:`Corte próximo · ${card.name}`,
+            copy:`Fecha de corte ${dateFmt.format(cutoff)}. Las compras posteriores normalmente pasan al siguiente ciclo.`,
+            side:days===0?"Hoy":`En ${days} d`,
+            notificationTitle:"Fecha de corte próxima",
+            notificationBody:`${card.name}: corte ${days===0?"hoy":`en ${days} día${days===1?"":"s"}`}`
+          });
+        }
+      });
+    }
+    if(settings.notifyUtilization){
+      cards.forEach(card=>{
+        const pct=utilizationPct(card);
+        if(pct!=null&&pct>=Number(settings.warningUtilization||50)){
+          alerts.push({
+            key:`util|${card.id}|${Math.floor(pct)}`,
+            priority:2,cls:"warn",icon:"%",
+            title:`Utilización alta · ${card.name}`,
+            copy:`Saldo reportado ${money(card.currentUsed||0)} de ${money(card.creditLimit||0)}.`,
+            side:`${pct.toFixed(0)}%`,
+            notificationTitle:"Utilización de crédito alta",
+            notificationBody:`${card.name}: ${pct.toFixed(0)}% del límite reportado`
+          });
+        }
+      });
+    }
+    return alerts.sort((a,b)=>b.priority-a.priority||String(a.title).localeCompare(String(b.title)));
+  }
+  function alertHtml(a){
+    return `<div class="alert-item ${a.cls}"><div class="alert-icon">${esc(a.icon)}</div><div><strong>${esc(a.title)}</strong><div class="alert-copy">${esc(a.copy)}</div></div><div class="alert-side">${esc(a.side||"")}</div></div>`;
+  }
+  function renderHomeAlerts(){
+    const all=alertData(),card=$("homeAlertsCard"),el=$("homeAlerts");
+    if(!all.length){card.style.display="none";el.innerHTML="";return}
+    card.style.display="block";
+    el.innerHTML=all.slice(0,3).map(alertHtml).join("");
+  }
 
   function calcCard(card,purchase,amount=null){
     purchase=norm(purchase);
@@ -252,7 +513,13 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
   }
 
   function renderHome(){
-    const today=new Date(),arr=ranking(today),best=arr.find(x=>x.eligible);renderHero(best,"todayHero",today,"today");renderRanking(arr,"todayRanking");$("todayLabel").textContent=dateFmt.format(today);renderCashFlow();renderUpcomingPayments();
+    const today=new Date(),arr=ranking(today),best=arr.find(x=>x.eligible);
+    renderHero(best,"todayHero",today,"today");
+    renderRanking(arr,"todayRanking");
+    $("todayLabel").textContent=dateFmt.format(today);
+    renderHomeAlerts();
+    renderCashFlow();
+    renderUpcomingPayments();
   }
 
   function renderCardSelect(){
@@ -263,7 +530,9 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
   function renderCards(){
     $("clearAll").style.display=cards.length?"inline-block":"none";const list=$("cardsList");
     if(!cards.length){list.innerHTML=`<div class="empty">Aún no has registrado tarjetas.</div>`;renderCardSelect();return}
-    list.innerHTML=cards.map(c=>{const available=c.creditLimit==null?null:Math.max(0,Number(c.creditLimit)-Number(c.currentUsed||0));return `<div class="credit-card"><div><strong>${esc(c.name)}</strong><div class="card-sub">${esc(c.bank||"Sin banco")} · corte ${c.cutoffDay} · pago ${c.paymentDay}${available!=null?` · disponible ${money(available)}`:""}</div></div><div class="row-actions"><button class="icon-btn" data-edit="${c.id}">Editar</button><button class="icon-btn" data-delete="${c.id}">×</button></div></div>`}).join("");
+    list.innerHTML=cards.map(c=>{
+      const available=c.creditLimit==null?null:Math.max(0,Number(c.creditLimit)-Number(c.currentUsed||0)),pct=utilizationPct(c),ucls=utilizationClass(pct);
+      return `<div class="credit-card"><div><strong>${esc(c.name)}</strong><div class="card-sub">${esc(c.bank||"Sin banco")} · corte ${c.cutoffDay} · pago ${c.paymentDay}${available!=null?` · disponible ${money(available)}`:""}${pct!=null?` · utilización ${pct.toFixed(0)}%`:""}</div></div><div class="row-actions">${pct!=null?`<span class="pill ${ucls}">${pct.toFixed(0)}%</span>`:""}<button class="icon-btn" data-edit="${c.id}">Editar</button><button class="icon-btn" data-delete="${c.id}">×</button></div></div>`}).join("");
     document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editCard(b.dataset.edit));document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteCard(b.dataset.delete));renderCardSelect();
   }
   function resetForm(){editingId=null;["cardName","bankName","cutoffDay","paymentDay","creditLimit","currentUsed"].forEach(id=>$(id).value="");$("formTitle").textContent="Agregar tarjeta";$("saveCard").textContent="Guardar tarjeta";$("cancelEdit").style.display="none"}
@@ -298,7 +567,146 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
   function deleteTx(id){if(!confirm("¿Eliminar esta compra del registro?"))return;transactions=transactions.filter(t=>t.id!==id);saveTx();renderAll();toast("Compra eliminada")}
   document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{purchaseFilter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x.dataset.filter===purchaseFilter));renderPurchases()});
 
-  function renderSimulation(){if(!$("purchaseDate").value)return;const d=parseISO($("purchaseDate").value),amount=$("purchaseAmount").value===""?null:Number($("purchaseAmount").value),arr=ranking(d,amount),best=arr.find(x=>x.eligible);renderHero(best,"simulationHero",d,"simulation");renderRanking(arr,"simulationRanking")}
+
+  function renderBars(entries,target){
+    const el=$(target);
+    if(!entries.length){el.innerHTML=`<div class="empty">No hay datos para este período.</div>`;return}
+    const max=Math.max(...entries.map(x=>x[1]),1);
+    el.innerHTML=entries.slice(0,8).map(([label,value])=>`<div class="bar-row"><div class="bar-label" title="${esc(label)}">${esc(label)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(2,(value/max)*100)}%"></div></div><div class="bar-value">${money(value)}</div></div>`).join("");
+  }
+  function renderTrend(monthStr){
+    const[y,m]=monthStr.split("-").map(Number),base=new Date(y,m-1,1),months=[];
+    for(let i=-5;i<=0;i++){
+      const d=addMonthsDate(base,i),key=monthISO(d),value=sumTx(selectedMonthTx(key));
+      months.push({d,key,value});
+    }
+    const max=Math.max(...months.map(x=>x.value),1);
+    $("trendChart").innerHTML=months.map(x=>`<div class="trend-col"><div class="trend-value">${x.value?money(x.value):"$0"}</div><div class="trend-track"><div class="trend-bar" style="height:${x.value?Math.max(3,(x.value/max)*100):2}%"></div></div><div class="trend-label">${new Intl.DateTimeFormat("es-SV",{month:"short"}).format(x.d)}</div></div>`).join("");
+  }
+  function renderUtilization(){
+    const known=cards.filter(c=>Number(c.creditLimit)>0),list=$("utilizationList");
+    if(!known.length){
+      $("totalUtilization").textContent="—";$("totalCreditLimit").textContent="—";$("totalReportedUsed").textContent="—";
+      list.innerHTML=`<div class="empty">Agrega límite y saldo utilizado a tus tarjetas para analizar utilización.</div>`;
+      $("utilizationRecommendation").innerHTML=`<strong>Sin datos suficientes.</strong><br>La app necesita el límite de crédito y el saldo utilizado reportado de al menos una tarjeta.`;
+      return;
+    }
+    const totalLimit=known.reduce((s,c)=>s+Number(c.creditLimit||0),0),totalUsed=known.reduce((s,c)=>s+Math.max(0,Number(c.currentUsed||0)),0),totalPct=totalLimit?totalUsed/totalLimit*100:0;
+    $("totalUtilization").textContent=`${totalPct.toFixed(0)}%`;$("totalCreditLimit").textContent=money(totalLimit);$("totalReportedUsed").textContent=money(totalUsed);
+    list.innerHTML=known.slice().sort((a,b)=>(utilizationPct(b)||0)-(utilizationPct(a)||0)).map(c=>{
+      const pct=utilizationPct(c)||0,cls=utilizationClass(pct),available=Math.max(0,Number(c.creditLimit)-Number(c.currentUsed||0));
+      return `<div class="util-row"><div class="util-head"><strong>${esc(c.name)}</strong><div class="util-percent">${pct.toFixed(0)}%</div></div><div class="util-track"><div class="util-fill ${cls}" style="width:${Math.min(100,pct)}%"></div></div><div class="util-meta"><span>${money(c.currentUsed||0)} usados</span><span>${money(available)} disponibles</span></div></div>`;
+    }).join("");
+    const high=known.filter(c=>(utilizationPct(c)||0)>=Number(settings.warningUtilization||50)).sort((a,b)=>(utilizationPct(b)||0)-(utilizationPct(a)||0));
+    if(!high.length){
+      $("utilizationRecommendation").innerHTML=`<strong>Distribución dentro de tus umbrales.</strong><br>Ninguna tarjeta supera la alerta de ${Number(settings.warningUtilization||50)}% con los saldos reportados.`;
+      return;
+    }
+    const alternatives=known.filter(c=>(utilizationPct(c)||0)<Number(settings.targetUtilization||30)).sort((a,b)=>(utilizationPct(a)||0)-(utilizationPct(b)||0));
+    if(alternatives.length){
+      const h=high[0],alt=alternatives[0];
+      $("utilizationRecommendation").innerHTML=`<strong>Considera redistribuir compras nuevas.</strong><br>${esc(h.name)} está en ${(utilizationPct(h)||0).toFixed(0)}%. ${esc(alt.name)} está en ${(utilizationPct(alt)||0).toFixed(0)}% y tiene ${money(Math.max(0,Number(alt.creditLimit)-Number(alt.currentUsed||0)))} disponibles.`;
+    }else{
+      $("utilizationRecommendation").innerHTML=`<strong>Hay tarjetas sobre el umbral alto.</strong><br>No existe otra tarjeta con datos conocidos por debajo de tu objetivo de ${Number(settings.targetUtilization||30)}%. Revisa límites y saldos antes de nuevas compras.`;
+    }
+  }
+  function renderReminderSettings(){
+    $("reminderDays").value=Number(settings.reminderDays??7);
+    $("cutoffReminderDays").value=Number(settings.cutoffReminderDays??1);
+    $("notifyPayments").checked=!!settings.notifyPayments;
+    $("notifyCutoffs").checked=!!settings.notifyCutoffs;
+    $("notifyUtilization").checked=!!settings.notifyUtilization;
+    $("targetUtilization").value=Number(settings.targetUtilization??30);
+    $("warningUtilization").value=Number(settings.warningUtilization??50);
+    const supported="Notification"in window;
+    const perm=supported?Notification.permission:"unsupported";
+    $("notificationPermissionTitle").textContent=perm==="granted"?"Notificaciones activadas":perm==="denied"?"Notificaciones bloqueadas":"Notificaciones del dispositivo";
+    $("notificationPermissionText").textContent=!supported?"Este navegador no soporta Notification API.":perm==="granted"?"Chrome puede mostrar alertas cuando la PWA está activa o se abre.":perm==="denied"?"Debes habilitar el permiso desde la configuración del sitio.":"Pulsa Activar para solicitar permiso.";
+    $("enableNotifications").textContent=perm==="granted"?"Activadas":perm==="denied"?"Bloqueadas":"Activar";
+  }
+  function renderDashboard(){
+    const month=$("dashboardMonth").value||monthISO(new Date()),monthTx=selectedMonthTx(month),dueTx=selectedMonthDue(month);
+    $("dashSpend").textContent=money(sumTx(monthTx));
+    $("dashPending").textContent=money(sumTx(monthTx.filter(t=>t.status!=="paid")));
+    $("dashDue").textContent=money(sumTx(dueTx));
+    $("dashCount").textContent=monthTx.length;
+    renderBars(groupSums(monthTx,t=>t.category||"Otro"),"categoryChart");
+    renderBars(groupSums(monthTx,t=>getCard(t.cardId)?.name||"Tarjeta eliminada"),"cardChart");
+    renderTrend(month);
+    renderUtilization();
+    renderReminderSettings();
+    const alerts=alertData();
+    $("alertCount").textContent=`${alerts.length} alerta${alerts.length===1?"":"s"}`;
+    $("dashboardAlerts").innerHTML=alerts.length?alerts.map(alertHtml).join(""):`<div class="empty">No hay alertas activas con la configuración actual.</div>`;
+  }
+  $("dashboardMonth").onchange=renderDashboard;
+  $("dashboardToday").onclick=()=>{$("dashboardMonth").value=monthISO(new Date());renderDashboard()};
+  $("saveUtilSettings").onclick=()=>{
+    const target=Math.max(1,Math.min(100,Number($("targetUtilization").value)||30)),warn=Math.max(1,Math.min(100,Number($("warningUtilization").value)||50));
+    if(warn<target){toast("La alerta alta debe ser igual o mayor al objetivo");return}
+    settings.targetUtilization=target;settings.warningUtilization=warn;saveSettings();renderAll();toast("Umbrales guardados");
+  };
+  $("saveReminderSettings").onclick=()=>{
+    settings.reminderDays=Math.max(0,Math.min(30,Number($("reminderDays").value)||0));
+    settings.cutoffReminderDays=Math.max(0,Math.min(10,Number($("cutoffReminderDays").value)||0));
+    settings.notifyPayments=$("notifyPayments").checked;settings.notifyCutoffs=$("notifyCutoffs").checked;settings.notifyUtilization=$("notifyUtilization").checked;
+    saveSettings();renderAll();checkAndNotify();toast("Recordatorios guardados");
+  };
+  $("enableNotifications").onclick=async()=>{
+    if(!("Notification"in window)){toast("Este navegador no soporta notificaciones");return}
+    if(Notification.permission==="denied"){alert("Chrome tiene bloqueadas las notificaciones para este sitio. Abre la configuración del sitio y habilita Notificaciones.");return}
+    const perm=await Notification.requestPermission();renderReminderSettings();
+    if(perm==="granted"){toast("Notificaciones activadas");checkAndNotify(true)}else toast("Permiso no concedido");
+  };
+  $("checkAlertsNow").onclick=()=>{renderDashboard();checkAndNotify(true);toast("Alertas revisadas")};
+
+  async function showSystemNotification(alert){
+    if(!("Notification"in window)||Notification.permission!=="granted")return;
+    try{
+      if("serviceWorker"in navigator){
+        const reg=await navigator.serviceWorker.ready;
+        reg.active?.postMessage({type:"SHOW_NOTIFICATION",title:alert.notificationTitle||alert.title,body:alert.notificationBody||alert.copy,tag:alert.key});
+      }else{
+        new Notification(alert.notificationTitle||alert.title,{body:alert.notificationBody||alert.copy});
+      }
+    }catch{}
+  }
+  async function checkAndNotify(force=false){
+    if(!("Notification"in window)||Notification.permission!=="granted")return;
+    const today=localISO(new Date()),alerts=alertData();
+    let changed=false;
+    for(const a of alerts){
+      if(!force&&settings.notificationKeys[a.key]===today)continue;
+      await showSystemNotification(a);
+      settings.notificationKeys[a.key]=today;changed=true;
+    }
+    if(changed){
+      const keys=Object.keys(settings.notificationKeys);
+      if(keys.length>100){
+        settings.notificationKeys=Object.fromEntries(keys.slice(-70).map(k=>[k,settings.notificationKeys[k]]));
+      }
+      saveSettings();
+    }
+  }
+
+  function renderUtilizationSuggestion(){
+    const target=$("utilizationSuggestion");
+    const amount=Number($("purchaseAmount").value||0),dateStr=$("purchaseDate").value;
+    if(!amount||amount<=0||!dateStr){target.innerHTML="";return}
+    const arr=ranking(parseISO(dateStr),amount),best=arr.find(x=>x.eligible);
+    if(!best){target.innerHTML="";return}
+    const bestPct=utilizationPct(best,amount);
+    if(bestPct==null||bestPct<Number(settings.warningUtilization||50)){target.innerHTML="";return}
+    const alternatives=arr.filter(x=>x.eligible&&x.id!==best.id&&utilizationPct(x,amount)!=null&&utilizationPct(x,amount)<bestPct).sort((a,b)=>(utilizationPct(a,amount)||999)-(utilizationPct(b,amount)||999));
+    if(!alternatives.length){
+      target.innerHTML=`<div class="card"><div class="recommend-box"><strong>Atención a la utilización.</strong><br>${esc(best.name)} quedaría aproximadamente en ${bestPct.toFixed(0)}% de utilización según el saldo reportado y esta compra. No hay una alternativa conocida con menor utilización suficiente.</div></div>`;
+      return;
+    }
+    const alt=alternatives[0],altPct=utilizationPct(alt,amount);
+    target.innerHTML=`<div class="card"><div class="recommend-box"><strong>Alternativa para equilibrar utilización:</strong><br>${esc(best.name)} maximiza el plazo (${best.days} días), pero quedaría cerca de ${bestPct.toFixed(0)}%. ${esc(alt.name)} quedaría alrededor de ${altPct.toFixed(0)}% y ofrece ${alt.days} días. Decide según tu prioridad entre liquidez y distribución del crédito.</div></div>`;
+  }
+
+  function renderSimulation(){if(!$("purchaseDate").value)return;const d=parseISO($("purchaseDate").value),amount=$("purchaseAmount").value===""?null:Number($("purchaseAmount").value),arr=ranking(d,amount),best=arr.find(x=>x.eligible);renderHero(best,"simulationHero",d,"simulation");renderUtilizationSuggestion();renderRanking(arr,"simulationRanking")}
   $("calculateBtn").onclick=renderSimulation;$("purchaseDate").onchange=renderSimulation;$("purchaseAmount").oninput=renderSimulation;
 
   function renderCalendar(){
@@ -307,10 +715,10 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
   function renderCalendarDetail(){const d=selectedCalendarDate;if(!d)return;const arr=ranking(d),best=arr.find(x=>x.eligible),target=$("calendarDetail");if(!best){target.innerHTML=`<div class="empty">Registra tarjetas para obtener recomendaciones.</div>`;return}target.innerHTML=`<div class="section-head"><h2>${esc(dateLongFmt.format(d))}</h2><span class="pill good">${best.days} días</span></div><div class="compare-row best"><div><strong>${esc(best.name)}</strong><div class="compare-meta">Corte ${dateFmt.format(best.cutoff)} · pago ${dateFmt.format(best.due)}</div></div><div class="pill good">Mejor opción</div></div>`}
   $("calendarMonth").onchange=()=>{selectedCalendarDate=null;renderCalendar()};$("goTodayMonth").onclick=()=>{$("calendarMonth").value=monthISO(new Date());selectedCalendarDate=new Date();renderCalendar()};
 
-  $("exportBtn").onclick=()=>{const backup={app:"Optimizador de Tarjetas",version:"1.3",exportedAt:new Date().toISOString(),cards,transactions,settings};const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`optimizador_tarjetas_respaldo_${localISO(new Date())}.json`;a.click();URL.revokeObjectURL(url)};
-  $("importBtn").onclick=()=>$("importFile").click();$("importFile").onchange=async()=>{const file=$("importFile").files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(Array.isArray(data)){cards=data;transactions=[];settings={liquidFunds:null}}else{if(!Array.isArray(data.cards))throw new Error();cards=data.cards;transactions=Array.isArray(data.transactions)?data.transactions.map(normalizeTransaction):[];settings={liquidFunds:null,...(data.settings||{})}}saveCards();saveTx();saveSettings();renderAll();toast("Respaldo importado correctamente")}catch{toast("No se pudo importar el respaldo")}$("importFile").value=""};
+  $("exportBtn").onclick=()=>{const backup={app:"Optimizador de Tarjetas",version:"1.9",exportedAt:new Date().toISOString(),cards,transactions,settings};const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`optimizador_tarjetas_respaldo_${localISO(new Date())}.json`;a.click();URL.revokeObjectURL(url)};
+  $("importBtn").onclick=()=>$("importFile").click();$("importFile").onchange=async()=>{const file=$("importFile").files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(Array.isArray(data)){cards=data;transactions=[];settings={...DEFAULT_SETTINGS}}else{if(!Array.isArray(data.cards))throw new Error();cards=data.cards;transactions=Array.isArray(data.transactions)?data.transactions.map(normalizeTransaction):[];settings={...DEFAULT_SETTINGS,...(data.settings||{})}}saveCards();saveTx();saveSettings();renderAll();toast("Respaldo importado correctamente")}catch{toast("No se pudo importar el respaldo")}$("importFile").value=""};
 
-  function showView(id,scroll=true){document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));if(id==="calendarView")renderCalendar();if(id==="simulateView")renderSimulation();if(id==="purchasesView")renderPurchases();if(scroll)window.scrollTo({top:0,behavior:"smooth"})}
+  function showView(id,scroll=true){document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));if(id==="dashboardView")renderDashboard();if(id==="calendarView")renderCalendar();if(id==="simulateView")renderSimulation();if(id==="purchasesView")renderPurchases();if(scroll)window.scrollTo({top:0,behavior:"smooth"})}
   document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));function bindGoButtons(){document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showView(b.dataset.go))}bindGoButtons();
 
   window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("installBtn").style.display="inline-block"});
@@ -318,9 +726,11 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
   $("installBtn").onclick=async()=>{if(isStandalone()){toast("La aplicación ya está instalada");return}if(deferredPrompt){deferredPrompt.prompt();const choice=await deferredPrompt.userChoice;if(choice&&choice.outcome==="accepted")toast("Instalando aplicación…");deferredPrompt=null;return}const ua=navigator.userAgent.toLowerCase(),isiOS=/iphone|ipad|ipod/.test(ua);if(isiOS)alert("Para instalar esta app en iPhone/iPad:\n\n1. Abre el menú Compartir de Safari.\n2. Selecciona ‘Agregar a pantalla de inicio’.\n3. Confirma con ‘Agregar’. ");else alert("Para instalar esta app en Android:\n\n1. Abre el menú ⋮ de Chrome.\n2. Busca ‘Instalar aplicación’ o ‘Agregar a pantalla principal’.\n3. Confirma la instalación.")};window.addEventListener("appinstalled",()=>{deferredPrompt=null;toast("Aplicación instalada correctamente")});if(isStandalone())$("installBtn").textContent="App instalada";
   if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));
 
-  $("purchaseDate").value=localISO(new Date());$("recordPurchaseDate").value=localISO(new Date());$("calendarMonth").value=monthISO(new Date());selectedCalendarDate=new Date();
-  function renderAll(){renderHome();renderCards();renderPurchases();renderSimulation();renderCalendar();bindGoButtons();renderPurchasePreview()}
+  $("purchaseDate").value=localISO(new Date());$("recordPurchaseDate").value=localISO(new Date());$("calendarMonth").value=monthISO(new Date());$("dashboardMonth").value=monthISO(new Date());selectedCalendarDate=new Date();
+  function renderAll(){renderHome();renderDashboard();renderCards();renderPurchases();renderSimulation();renderCalendar();bindGoButtons();renderPurchasePreview()}
   renderAll();
+  window.addEventListener("load",()=>setTimeout(()=>checkAndNotify(false),1200));
+  window.setInterval(()=>checkAndNotify(false),60*60*1000);
 })();
 </script>
 </body>
