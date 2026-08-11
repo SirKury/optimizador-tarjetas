@@ -88,6 +88,32 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
 .month-toolbar{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
 .month-toolbar .field{margin:0}
 .sim-util{margin-top:10px}
+
+/* v1.10 — Tasas y costo financiero */
+.rate-badge{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:#f2eefb;color:#6842a3;font-size:9px;font-weight:850;white-space:nowrap}
+.finance-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.finance-result{padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.finance-result strong{display:block;font-size:11px}
+.finance-result .big-cost{font-size:22px;font-weight:900;line-height:1.1;margin:5px 0}
+.finance-result .finance-meta{font-size:9px;color:var(--muted);line-height:1.45}
+.finance-ranking{display:grid;gap:8px}
+.finance-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.finance-row.best-cost{background:#f5fbf7;border-color:#d4eadb}
+.finance-row strong{display:block;font-size:11px}
+.finance-row .sub{font-size:9px;color:var(--muted);line-height:1.4;margin-top:3px}
+.finance-cost{text-align:right}
+.finance-cost b{display:block;font-size:13px}
+.finance-cost span{font-size:8px;color:var(--muted)}
+.rate-list{display:grid;gap:8px}
+.rate-row{padding:11px;border:1px solid var(--line);border-radius:14px;background:#fff;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.rate-row strong{display:block;font-size:11px}
+.rate-row .sub{font-size:9px;color:var(--muted);margin-top:3px}
+.rate-value{text-align:right;font-size:12px;font-weight:900}
+.rate-value span{display:block;font-size:8px;color:var(--muted);font-weight:700;margin-top:2px}
+.finance-warning{padding:12px;border-radius:14px;background:#fff8e8;border:1px solid #ead9aa;color:#6e4c00;font-size:10px;line-height:1.5}
+.finance-safe{padding:12px;border-radius:14px;background:#f2faf5;border:1px solid #d3e8da;color:#235e3d;font-size:10px;line-height:1.5}
+@media(max-width:430px){.finance-grid{grid-template-columns:1fr}}
+
 @media(max-width:430px){
   .bottom-nav{padding-left:2px;padding-right:2px}
   .nav-btn{font-size:7px}.nav-btn .ico{font-size:18px}
@@ -110,7 +136,7 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
 <body>
 <div class="app-shell">
 <header class="appbar">
-  <div class="brand"><div class="brand-mark">◈</div><div class="brand-text"><strong>Optimizador de Tarjetas</strong><span>Flujo de caja, alertas y analítica · v1.9</span></div></div>
+  <div class="brand"><div class="brand-mark">◈</div><div class="brand-text"><strong>Optimizador de Tarjetas</strong><span>Flujo de caja, crédito y costo financiero · v1.10</span></div></div>
   <button id="installBtn" class="install-btn">Instalar app</button>
 </header>
 <main>
@@ -186,6 +212,19 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
   </div>
 
   <div class="card">
+    <div class="section-head"><h2>Costo financiero potencial</h2><span class="small">v1.10</span></div>
+    <div class="dashboard-metrics">
+      <div class="kpi"><b id="cardsWithRate">0</b><span>Tarjetas con tasa registrada</span></div>
+      <div class="kpi"><b id="highestRate">—</b><span>Tasa anual más alta</span></div>
+      <div class="kpi"><b id="potential30dCost">—</b><span>Interés estimado 30 días*</span></div>
+      <div class="kpi"><b id="weightedRate">—</b><span>Tasa ponderada por saldo*</span></div>
+    </div>
+    <div class="section-head" style="margin-top:14px"><h2>Prioridad por costo de deuda</h2><span class="small">Mayor tasa primero</span></div>
+    <div id="rateRanking" class="rate-list"></div>
+    <div class="note">*Estimaciones simples para planificación. El cálculo real del emisor puede usar saldo diario, fechas de contabilización, impuestos, comisiones y reglas contractuales distintas. Si pagas íntegramente el monto requerido para conservar el período de gracia, el interés ordinario por compras puede ser $0.</div>
+  </div>
+
+  <div class="card">
     <div class="section-head"><h2>Utilización de crédito</h2><span class="small">v1.9</span></div>
     <div class="util-summary">
       <div class="metric"><b id="totalUtilization">—</b><span>Utilización total conocida</span></div>
@@ -242,9 +281,11 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
       <div class="field"><label>Día límite de pago</label><input id="paymentDay" type="number" min="1" max="31" placeholder="Ej. 25"></div>
       <div class="field"><label>Límite de crédito (opcional)</label><input id="creditLimit" type="number" min="0" step="0.01" placeholder="Ej. 3000"></div>
       <div class="field"><label>Saldo utilizado actual (opcional)</label><input id="currentUsed" type="number" min="0" step="0.01" placeholder="Ej. 450"></div>
+      <div class="field"><label>Tasa de interés anual de compras (%)</label><input id="annualInterestRate" type="number" min="0" max="300" step="0.01" placeholder="Ej. 38.90"></div>
+      <div class="field"><label>Referencia de tasa (opcional)</label><input id="rateNote" placeholder="Ej. Contrato / estado de cuenta"></div>
     </div>
     <div class="actions"><button id="saveCard" class="btn primary">Guardar tarjeta</button><button id="cancelEdit" class="btn secondary" style="display:none">Cancelar</button></div>
-    <div class="note"><b>Fecha exacta de corte:</b> la app usa un supuesto conservador y considera que la compra podría entrar en ese mismo estado de cuenta.</div>
+    <div class="note"><b>Fecha exacta de corte:</b> la app usa un supuesto conservador y considera que la compra podría entrar en ese mismo estado de cuenta. <b>Tasa:</b> registra la tasa anual aplicable a compras que aparece en el contrato o estado de cuenta; no ingreses una tasa promocional temporal salvo que quieras simular específicamente esa condición.</div>
   </div>
   <div class="card"><div class="section-head"><h2>Tarjetas registradas</h2><button id="clearAll" class="btn danger" style="display:none">Eliminar todas</button></div><div id="cardsList" class="card-list"></div></div>
   <div class="card"><div class="section-head"><h2>Respaldo local</h2></div><div class="backup-grid"><button id="exportBtn" class="btn ghost">Exportar todo</button><button id="importBtn" class="btn ghost">Importar respaldo</button><input id="importFile" type="file" accept="application/json" style="display:none"></div><div class="privacy"><div>🔒</div><div><b>Privacidad</b><span>Tarjetas, compras y capital se guardan localmente en este navegador. No se requieren credenciales bancarias.</span></div></div></div>
@@ -274,10 +315,23 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
 
 <section id="simulateView" class="view">
   <div class="page-title"><h1>Simular compra</h1><p>Compara antes de comprar; el monto puede descartar tarjetas sin crédito disponible suficiente.</p></div>
-  <div class="card"><div class="sim-summary"><div class="field"><label>Fecha de compra</label><input id="purchaseDate" type="date"></div><div class="field"><label>Monto (opcional)</label><input id="purchaseAmount" type="number" min="0" step="0.01" placeholder="Ej. 500"></div></div><button id="calculateBtn" class="btn primary full" style="margin-top:11px">Calcular mejor tarjeta</button></div>
+  <div class="card">
+    <div class="sim-summary">
+      <div class="field"><label>Fecha de compra</label><input id="purchaseDate" type="date"></div>
+      <div class="field"><label>Monto de compra</label><input id="purchaseAmount" type="number" min="0" step="0.01" placeholder="Ej. 1000"></div>
+    </div>
+    <div class="finance-grid" style="margin-top:9px">
+      <div class="field" style="margin:0"><label>Pago previsto en fecha límite</label><input id="plannedPayment" type="number" min="0" step="0.01" placeholder="Vacío = pagar todo"></div>
+      <div class="field" style="margin:0"><label>Días que financiarías el saldo restante</label><input id="financeDays" type="number" min="1" max="3650" step="1" value="30"></div>
+    </div>
+    <button id="calculateBtn" class="btn primary full" style="margin-top:11px">Calcular mejor tarjeta y costo</button>
+    <div class="footer-note" style="margin-top:9px">Si dejas “Pago previsto” vacío, la app asume que pagarás el monto completo y el costo financiero estimado será $0.</div>
+  </div>
   <div id="simulationHero"></div>
   <div id="utilizationSuggestion" class="sim-util"></div>
-  <div class="card"><div class="section-head"><h2>Comparación</h2><span class="small">Mayor plazo primero</span></div><div id="simulationRanking" class="compare"></div></div>
+  <div id="financeSimulationSummary"></div>
+  <div class="card"><div class="section-head"><h2>Comparación por período de gracia</h2><span class="small">Mayor plazo primero</span></div><div id="simulationRanking" class="compare"></div></div>
+  <div id="financeRankingCard" class="card" style="display:none"><div class="section-head"><h2>Comparación por costo financiero</h2><span class="small">Menor interés estimado primero</span></div><div id="financeRanking" class="finance-ranking"></div></div>
 </section>
 
 <section id="calendarView" class="view">
@@ -336,6 +390,20 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
   function saveSettings(){localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings))}
   function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add("show");clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.remove("show"),2300)}
   function getCard(id){return cards.find(c=>c.id===id)}
+
+  function annualRate(card){
+    const r=Number(card?.annualInterestRate);
+    return Number.isFinite(r)&&r>=0?r:null;
+  }
+  function estimatedInterest(principal,annualRatePct,days){
+    const p=Math.max(0,Number(principal||0)),r=Number(annualRatePct),d=Math.max(0,Number(days||0));
+    if(!p||!Number.isFinite(r)||r<0||!d)return 0;
+    return p*(r/100)*(d/365);
+  }
+  function monthlyRateApprox(card){
+    const r=annualRate(card);
+    return r==null?null:r/12;
+  }
 
   function utilizationPct(card,extraAmount=0){
     const limit=Number(card?.creditLimit);
@@ -480,7 +548,7 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
   function renderRanking(arr,target){
     const el=$(target);if(!arr.length){el.innerHTML=`<div class="empty">No hay tarjetas registradas.</div>`;return}
     const best=arr.find(x=>x.eligible);
-    el.innerHTML=arr.map(r=>`<div class="compare-row ${best&&r.id===best.id?"best":""}"><div><strong>${esc(r.name)}</strong><div class="compare-meta">${esc(r.bank||"Sin banco")} · corte ${r.cutoffDay} · pago ${r.paymentDay}${r.available!=null?` · disponible ${money(r.available)}`:""}</div></div><div>${!r.eligible?`<span class="pill bad">Cupo insuficiente</span>`:r.onCut?`<span class="pill warn">${r.days} días</span>`:`<span class="pill good">${r.days} días</span>`}</div></div>`).join("");
+    el.innerHTML=arr.map(r=>`<div class="compare-row ${best&&r.id===best.id?"best":""}"><div><strong>${esc(r.name)}</strong><div class="compare-meta">${esc(r.bank||"Sin banco")} · corte ${r.cutoffDay} · pago ${r.paymentDay}${r.available!=null?` · disponible ${money(r.available)}`:""}${annualRate(r)!=null?` · tasa ${annualRate(r).toFixed(2)}% anual`:""}</div></div><div>${!r.eligible?`<span class="pill bad">Cupo insuficiente</span>`:r.onCut?`<span class="pill warn">${r.days} días</span>`:`<span class="pill good">${r.days} días</span>`}</div></div>`).join("");
   }
 
   function renderCashFlow(){
@@ -532,16 +600,16 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
     if(!cards.length){list.innerHTML=`<div class="empty">Aún no has registrado tarjetas.</div>`;renderCardSelect();return}
     list.innerHTML=cards.map(c=>{
       const available=c.creditLimit==null?null:Math.max(0,Number(c.creditLimit)-Number(c.currentUsed||0)),pct=utilizationPct(c),ucls=utilizationClass(pct);
-      return `<div class="credit-card"><div><strong>${esc(c.name)}</strong><div class="card-sub">${esc(c.bank||"Sin banco")} · corte ${c.cutoffDay} · pago ${c.paymentDay}${available!=null?` · disponible ${money(available)}`:""}${pct!=null?` · utilización ${pct.toFixed(0)}%`:""}</div></div><div class="row-actions">${pct!=null?`<span class="pill ${ucls}">${pct.toFixed(0)}%</span>`:""}<button class="icon-btn" data-edit="${c.id}">Editar</button><button class="icon-btn" data-delete="${c.id}">×</button></div></div>`}).join("");
+      return `<div class="credit-card"><div><strong>${esc(c.name)}</strong><div class="card-sub">${esc(c.bank||"Sin banco")} · corte ${c.cutoffDay} · pago ${c.paymentDay}${available!=null?` · disponible ${money(available)}`:""}${pct!=null?` · utilización ${pct.toFixed(0)}%`:""}${annualRate(c)!=null?` · tasa ${annualRate(c).toFixed(2)}% anual`:""}</div></div><div class="row-actions">${annualRate(c)!=null?`<span class="rate-badge">${annualRate(c).toFixed(1)}%</span>`:""}${pct!=null?`<span class="pill ${ucls}">${pct.toFixed(0)}%</span>`:""}<button class="icon-btn" data-edit="${c.id}">Editar</button><button class="icon-btn" data-delete="${c.id}">×</button></div></div>`}).join("");
     document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editCard(b.dataset.edit));document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteCard(b.dataset.delete));renderCardSelect();
   }
-  function resetForm(){editingId=null;["cardName","bankName","cutoffDay","paymentDay","creditLimit","currentUsed"].forEach(id=>$(id).value="");$("formTitle").textContent="Agregar tarjeta";$("saveCard").textContent="Guardar tarjeta";$("cancelEdit").style.display="none"}
-  function editCard(id){const c=getCard(id);if(!c)return;editingId=id;$("cardName").value=c.name||"";$("bankName").value=c.bank||"";$("cutoffDay").value=c.cutoffDay;$("paymentDay").value=c.paymentDay;$("creditLimit").value=c.creditLimit??"";$("currentUsed").value=c.currentUsed??"";$("formTitle").textContent="Editar tarjeta";$("saveCard").textContent="Guardar cambios";$("cancelEdit").style.display="inline-block";showView("cardsView",false);window.scrollTo({top:0,behavior:"smooth"})}
+  function resetForm(){editingId=null;["cardName","bankName","cutoffDay","paymentDay","creditLimit","currentUsed","annualInterestRate","rateNote"].forEach(id=>$(id).value="");$("formTitle").textContent="Agregar tarjeta";$("saveCard").textContent="Guardar tarjeta";$("cancelEdit").style.display="none"}
+  function editCard(id){const c=getCard(id);if(!c)return;editingId=id;$("cardName").value=c.name||"";$("bankName").value=c.bank||"";$("cutoffDay").value=c.cutoffDay;$("paymentDay").value=c.paymentDay;$("creditLimit").value=c.creditLimit??"";$("currentUsed").value=c.currentUsed??"";$("annualInterestRate").value=c.annualInterestRate??"";$("rateNote").value=c.rateNote??"";$("formTitle").textContent="Editar tarjeta";$("saveCard").textContent="Guardar cambios";$("cancelEdit").style.display="inline-block";showView("cardsView",false);window.scrollTo({top:0,behavior:"smooth"})}
   function deleteCard(id){
     const related=transactions.filter(t=>t.cardId===id);if(related.length&&!confirm(`Esta tarjeta tiene ${related.length} compras registradas. Si la eliminas también se eliminarán esas compras. ¿Continuar?`))return;
     cards=cards.filter(c=>c.id!==id);transactions=transactions.filter(t=>t.cardId!==id);saveCards();saveTx();if(editingId===id)resetForm();renderAll();toast("Tarjeta eliminada");
   }
-  $("saveCard").onclick=()=>{const name=$("cardName").value.trim(),bank=$("bankName").value.trim(),cutoffDay=Number($("cutoffDay").value),paymentDay=Number($("paymentDay").value),creditLimit=$("creditLimit").value===""?null:Number($("creditLimit").value),currentUsed=$("currentUsed").value===""?null:Number($("currentUsed").value);if(!name||!Number.isInteger(cutoffDay)||cutoffDay<1||cutoffDay>31||!Number.isInteger(paymentDay)||paymentDay<1||paymentDay>31){toast("Completa el nombre y usa días válidos del 1 al 31");return}if((creditLimit!=null&&creditLimit<0)||(currentUsed!=null&&currentUsed<0)){toast("Los montos no pueden ser negativos");return}const data={id:editingId||uid(),name,bank,cutoffDay,paymentDay,creditLimit,currentUsed};cards=editingId?cards.map(c=>c.id===editingId?data:c):[...cards,data];saveCards();resetForm();renderAll();toast("Tarjeta guardada")};
+  $("saveCard").onclick=()=>{const name=$("cardName").value.trim(),bank=$("bankName").value.trim(),cutoffDay=Number($("cutoffDay").value),paymentDay=Number($("paymentDay").value),creditLimit=$("creditLimit").value===""?null:Number($("creditLimit").value),currentUsed=$("currentUsed").value===""?null:Number($("currentUsed").value),annualInterestRate=$("annualInterestRate").value===""?null:Number($("annualInterestRate").value),rateNote=$("rateNote").value.trim();if(!name||!Number.isInteger(cutoffDay)||cutoffDay<1||cutoffDay>31||!Number.isInteger(paymentDay)||paymentDay<1||paymentDay>31){toast("Completa el nombre y usa días válidos del 1 al 31");return}if((creditLimit!=null&&creditLimit<0)||(currentUsed!=null&&currentUsed<0)){toast("Los montos no pueden ser negativos");return}if(annualInterestRate!=null&&(!Number.isFinite(annualInterestRate)||annualInterestRate<0||annualInterestRate>300)){toast("Revisa la tasa anual ingresada");return}const previous=editingId?getCard(editingId):null;const data={...(previous||{}),id:editingId||uid(),name,bank,cutoffDay,paymentDay,creditLimit,currentUsed,annualInterestRate,rateNote};cards=editingId?cards.map(c=>c.id===editingId?data:c):[...cards,data];saveCards();resetForm();renderAll();toast("Tarjeta guardada")};
   $("cancelEdit").onclick=resetForm;$("clearAll").onclick=()=>{if(confirm("¿Eliminar todas las tarjetas y todas las compras registradas?")){cards=[];transactions=[];saveCards();saveTx();resetForm();renderAll();toast("Datos de tarjetas eliminados")}};
 
   function renderPurchasePreview(){
@@ -624,6 +692,30 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
     $("notificationPermissionText").textContent=!supported?"Este navegador no soporta Notification API.":perm==="granted"?"Chrome puede mostrar alertas cuando la PWA está activa o se abre.":perm==="denied"?"Debes habilitar el permiso desde la configuración del sitio.":"Pulsa Activar para solicitar permiso.";
     $("enableNotifications").textContent=perm==="granted"?"Activadas":perm==="denied"?"Bloqueadas":"Activar";
   }
+  function renderFinancialCostDashboard(){
+    const withRate=cards.filter(c=>annualRate(c)!=null);
+    $("cardsWithRate").textContent=withRate.length;
+    if(!withRate.length){
+      $("highestRate").textContent="—";$("potential30dCost").textContent="—";$("weightedRate").textContent="—";
+      $("rateRanking").innerHTML=`<div class="empty">Registra la tasa anual de tus tarjetas para analizar costo financiero.</div>`;
+      return;
+    }
+    const maxRate=Math.max(...withRate.map(c=>annualRate(c)||0));
+    $("highestRate").textContent=`${maxRate.toFixed(2)}%`;
+
+    const balanceCards=withRate.filter(c=>Number(c.currentUsed)>0);
+    const totalBalance=balanceCards.reduce((s,c)=>s+Math.max(0,Number(c.currentUsed||0)),0);
+    const cost30=balanceCards.reduce((s,c)=>s+estimatedInterest(c.currentUsed,annualRate(c),30),0);
+    const weighted=totalBalance>0?balanceCards.reduce((s,c)=>s+Number(c.currentUsed||0)*(annualRate(c)||0),0)/totalBalance:null;
+    $("potential30dCost").textContent=totalBalance>0?money(cost30):"$0.00";
+    $("weightedRate").textContent=weighted==null?"—":`${weighted.toFixed(2)}%`;
+
+    $("rateRanking").innerHTML=withRate.slice().sort((a,b)=>(annualRate(b)||0)-(annualRate(a)||0)).map(c=>{
+      const r=annualRate(c),bal=Math.max(0,Number(c.currentUsed||0)),cost=estimatedInterest(bal,r,30),monthly=monthlyRateApprox(c);
+      return `<div class="rate-row"><div><strong>${esc(c.name)}</strong><div class="sub">${esc(c.bank||"Sin banco")}${bal?` · saldo reportado ${money(bal)} · costo 30 d ≈ ${money(cost)}`:" · sin saldo utilizado reportado"}${c.rateNote?` · ${esc(c.rateNote)}`:""}</div></div><div class="rate-value">${r.toFixed(2)}%<span>anual · ≈ ${monthly.toFixed(2)}%/mes</span></div></div>`;
+    }).join("");
+  }
+
   function renderDashboard(){
     const month=$("dashboardMonth").value||monthISO(new Date()),monthTx=selectedMonthTx(month),dueTx=selectedMonthDue(month);
     $("dashSpend").textContent=money(sumTx(monthTx));
@@ -633,6 +725,7 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
     renderBars(groupSums(monthTx,t=>t.category||"Otro"),"categoryChart");
     renderBars(groupSums(monthTx,t=>getCard(t.cardId)?.name||"Tarjeta eliminada"),"cardChart");
     renderTrend(month);
+    renderFinancialCostDashboard();
     renderUtilization();
     renderReminderSettings();
     const alerts=alertData();
@@ -706,8 +799,43 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
     target.innerHTML=`<div class="card"><div class="recommend-box"><strong>Alternativa para equilibrar utilización:</strong><br>${esc(best.name)} maximiza el plazo (${best.days} días), pero quedaría cerca de ${bestPct.toFixed(0)}%. ${esc(alt.name)} quedaría alrededor de ${altPct.toFixed(0)}% y ofrece ${alt.days} días. Decide según tu prioridad entre liquidez y distribución del crédito.</div></div>`;
   }
 
-  function renderSimulation(){if(!$("purchaseDate").value)return;const d=parseISO($("purchaseDate").value),amount=$("purchaseAmount").value===""?null:Number($("purchaseAmount").value),arr=ranking(d,amount),best=arr.find(x=>x.eligible);renderHero(best,"simulationHero",d,"simulation");renderUtilizationSuggestion();renderRanking(arr,"simulationRanking")}
-  $("calculateBtn").onclick=renderSimulation;$("purchaseDate").onchange=renderSimulation;$("purchaseAmount").oninput=renderSimulation;
+  function financingInputs(){
+    const amount=Math.max(0,Number($("purchaseAmount").value||0));
+    const paymentRaw=$("plannedPayment").value.trim();
+    const planned=paymentRaw===""?amount:Math.max(0,Number(paymentRaw||0));
+    const days=Math.max(1,Math.min(3650,Number($("financeDays").value||30)));
+    return {amount,planned:Math.min(planned,amount),days,financed:Math.max(0,amount-Math.min(planned,amount)),paymentWasBlank:paymentRaw===""};
+  }
+  function renderFinanceSimulation(){
+    const summary=$("financeSimulationSummary"),rankingCard=$("financeRankingCard"),rankEl=$("financeRanking");
+    const inp=financingInputs();
+    if(!inp.amount){
+      summary.innerHTML="";rankingCard.style.display="none";rankEl.innerHTML="";return;
+    }
+    if(inp.financed<=0){
+      summary.innerHTML=`<div class="card"><div class="finance-safe"><strong>Escenario sin saldo financiado.</strong><br>Según lo ingresado, pagarías ${money(inp.amount)} en la fecha límite. El interés ordinario estimado por financiar esta compra es <b>$0.00</b>, siempre que el emisor mantenga tu período de gracia y cumplas sus condiciones.</div></div>`;
+      rankingCard.style.display="none";rankEl.innerHTML="";return;
+    }
+
+    const rows=cards.map(c=>{
+      const r=annualRate(c);
+      return {card:c,rate:r,cost:r==null?null:estimatedInterest(inp.financed,r,inp.days)};
+    });
+    const known=rows.filter(x=>x.cost!=null).sort((a,b)=>a.cost-b.cost);
+    const best=known[0];
+
+    summary.innerHTML=`<div class="card"><div class="section-head"><h2>Escenario de financiamiento</h2><span class="small">Estimación simple</span></div><div class="finance-grid"><div class="finance-result"><strong>Saldo que quedaría financiado</strong><div class="big-cost">${money(inp.financed)}</div><div class="finance-meta">Compra ${money(inp.amount)} − pago previsto ${money(inp.planned)}</div></div><div class="finance-result"><strong>Período simulado</strong><div class="big-cost">${inp.days} días</div><div class="finance-meta">${best?`Menor costo entre tasas registradas: ≈ ${money(best.cost)} con ${esc(best.card.name)}.`:"Agrega tasas a las tarjetas para estimar intereses."}</div></div></div><div class="finance-warning" style="margin-top:10px"><b>Importante:</b> esta app usa una aproximación de interés simple diario (tasa anual ÷ 365). El banco puede calcular intereses con saldo diario, fechas de contabilización, impuestos, comisiones o reglas contractuales diferentes.</div></div>`;
+
+    if(!known.length){rankingCard.style.display="block";rankEl.innerHTML=`<div class="empty">Ninguna tarjeta tiene una tasa anual registrada.</div>`;return}
+    rankingCard.style.display="block";
+    rankEl.innerHTML=[...known,...rows.filter(x=>x.cost==null)].map(x=>{
+      const isBest=best&&x.card.id===best.card.id;
+      return `<div class="finance-row ${isBest?"best-cost":""}"><div><strong>${esc(x.card.name)} ${isBest?"· menor costo estimado":""}</strong><div class="sub">${esc(x.card.bank||"Sin banco")}${x.rate!=null?` · tasa ${x.rate.toFixed(2)}% anual`:" · tasa no registrada"} · saldo a financiar ${money(inp.financed)} · ${inp.days} días</div></div><div class="finance-cost"><b>${x.cost==null?"—":money(x.cost)}</b><span>${x.cost==null?"sin tasa":"interés aprox."}</span></div></div>`;
+    }).join("");
+  }
+
+  function renderSimulation(){if(!$("purchaseDate").value)return;const d=parseISO($("purchaseDate").value),amount=$("purchaseAmount").value===""?null:Number($("purchaseAmount").value),arr=ranking(d,amount),best=arr.find(x=>x.eligible);renderHero(best,"simulationHero",d,"simulation");renderUtilizationSuggestion();renderFinanceSimulation();renderRanking(arr,"simulationRanking")}
+  $("calculateBtn").onclick=renderSimulation;$("purchaseDate").onchange=renderSimulation;$("purchaseAmount").oninput=renderSimulation;$("plannedPayment").oninput=renderSimulation;$("financeDays").oninput=renderSimulation;
 
   function renderCalendar(){
     const v=$("calendarMonth").value;if(!v)return;const[y,m1]=v.split("-").map(Number),m=m1-1,first=new Date(y,m,1),offset=(first.getDay()+6)%7,labels=["L","M","X","J","V","S","D"];let html=labels.map(x=>`<div class="dow">${x}</div>`).join("");for(let i=0;i<offset;i++)html+=`<div class="day blank"></div>`;const today=norm(new Date());for(let day=1;day<=dim(y,m);day++){const d=new Date(y,m,day),arr=ranking(d),best=arr.find(x=>x.eligible),isToday=d.getTime()===today.getTime(),isSelected=selectedCalendarDate&&d.getTime()===norm(selectedCalendarDate).getTime();html+=`<div class="day ${isToday?"today":""} ${isSelected?"selected":""}" data-date="${localISO(d)}"><div class="day-num">${day}</div>${best?`<div class="day-card">${esc(best.name)}</div><div class="day-days">${best.days} días</div>`:`<div class="day-card">—</div>`}</div>`}$("calendarGrid").innerHTML=html;document.querySelectorAll(".day[data-date]").forEach(el=>el.onclick=()=>{selectedCalendarDate=parseISO(el.dataset.date);renderCalendar();renderCalendarDetail()});if(!selectedCalendarDate||selectedCalendarDate.getFullYear()!==y||selectedCalendarDate.getMonth()!==m)selectedCalendarDate=new Date(y,m,1);renderCalendarDetail();
@@ -715,7 +843,7 @@ main{padding:16px}.view{display:none;animation:fade .16s ease}.view.active{displ
   function renderCalendarDetail(){const d=selectedCalendarDate;if(!d)return;const arr=ranking(d),best=arr.find(x=>x.eligible),target=$("calendarDetail");if(!best){target.innerHTML=`<div class="empty">Registra tarjetas para obtener recomendaciones.</div>`;return}target.innerHTML=`<div class="section-head"><h2>${esc(dateLongFmt.format(d))}</h2><span class="pill good">${best.days} días</span></div><div class="compare-row best"><div><strong>${esc(best.name)}</strong><div class="compare-meta">Corte ${dateFmt.format(best.cutoff)} · pago ${dateFmt.format(best.due)}</div></div><div class="pill good">Mejor opción</div></div>`}
   $("calendarMonth").onchange=()=>{selectedCalendarDate=null;renderCalendar()};$("goTodayMonth").onclick=()=>{$("calendarMonth").value=monthISO(new Date());selectedCalendarDate=new Date();renderCalendar()};
 
-  $("exportBtn").onclick=()=>{const backup={app:"Optimizador de Tarjetas",version:"1.9",exportedAt:new Date().toISOString(),cards,transactions,settings};const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`optimizador_tarjetas_respaldo_${localISO(new Date())}.json`;a.click();URL.revokeObjectURL(url)};
+  $("exportBtn").onclick=()=>{const backup={app:"Optimizador de Tarjetas",version:"1.10",exportedAt:new Date().toISOString(),cards,transactions,settings};const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`optimizador_tarjetas_respaldo_${localISO(new Date())}.json`;a.click();URL.revokeObjectURL(url)};
   $("importBtn").onclick=()=>$("importFile").click();$("importFile").onchange=async()=>{const file=$("importFile").files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(Array.isArray(data)){cards=data;transactions=[];settings={...DEFAULT_SETTINGS}}else{if(!Array.isArray(data.cards))throw new Error();cards=data.cards;transactions=Array.isArray(data.transactions)?data.transactions.map(normalizeTransaction):[];settings={...DEFAULT_SETTINGS,...(data.settings||{})}}saveCards();saveTx();saveSettings();renderAll();toast("Respaldo importado correctamente")}catch{toast("No se pudo importar el respaldo")}$("importFile").value=""};
 
   function showView(id,scroll=true){document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));if(id==="dashboardView")renderDashboard();if(id==="calendarView")renderCalendar();if(id==="simulateView")renderSimulation();if(id==="purchasesView")renderPurchases();if(scroll)window.scrollTo({top:0,behavior:"smooth"})}
